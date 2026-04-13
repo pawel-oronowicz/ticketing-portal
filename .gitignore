@@ -1,0 +1,12 @@
+# Symfony
+api/vendor/
+api/var/
+api/.env.local
+api/.env.dev
+
+# React
+frontend/node_modules/
+frontend/dist/
+
+# Docker
+.env
