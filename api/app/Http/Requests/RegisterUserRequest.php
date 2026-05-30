@@ -11,6 +11,9 @@ class RegisterUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        if ($this->user()) {
+            abort(403, 'Already authenticated.');
+        }
         return true;
     }
 

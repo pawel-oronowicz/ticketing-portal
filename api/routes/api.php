@@ -9,8 +9,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/');
 });
 
-Route::middleware('guest')->group(function () {
-    Route::post('/register', RegisterUserController::class);
-    Route::post('/login', LoginUserController::class);
-});
+Route::post('/register', RegisterUserController::class);
+Route::post('/login', LoginUserController::class);
 
