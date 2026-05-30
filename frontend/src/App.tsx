@@ -1,13 +1,21 @@
 import './App.css'
 
-import Test from './components/Test';
+import { Routes, Route } from 'react-router'
+import ProtectedRoute from './components/ProtectedRoute'
+import RegisterPage from './pages/auth/RegisterPage'
+import LoginPage from './pages/auth/LoginPage'
+import DashboardPage from "./pages/DashboardPage.tsx";
 
-function App() {
-  return (
-    <div className="App">
-      <Test/>
-    </div>
-  )
+export default function App() {
+    return (
+        <Routes>
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/" element={
+                <ProtectedRoute>
+                    <DashboardPage />
+                </ProtectedRoute>
+            } />
+        </Routes>
+    )
 }
-
-export default App
