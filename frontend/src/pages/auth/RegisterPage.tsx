@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signup } from '../../api/auth'
 import { useNavigate } from 'react-router'
+import { useAuth } from "../../context/AuthContext.tsx";
 import Navbar from '../../components/ui/Navbar.tsx'
 
 const schema = z.object({
@@ -28,14 +29,12 @@ export default function RegisterPage() {
         resolver: zodResolver(schema),
     })
 
+    const { setAuth } = useAuth()
+
     const onSubmit = async (data: FormData) => {
-        try {
-            const response = await signup(data)
-            localStorage.setItem('token', response.token)
-            navigate('/login')
-        } catch (error) {
-            console.error('Registration failed', error)
-        }
+        const response = await signup(data)
+        setAuth(response.user, response.token)
+        navigate('/')
     }
 
     return (

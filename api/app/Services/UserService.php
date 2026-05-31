@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserService
@@ -17,9 +16,7 @@ class UserService
      */
     public function createUser(array $data): User
     {
-        return $this->userRepository->create([
-            ...$data,
-        ]);
+        return $this->userRepository->create([$data]);
     }
 
     /**

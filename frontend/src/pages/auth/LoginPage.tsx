@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { login } from '../../api/auth'
 import { useNavigate } from 'react-router'
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext.tsx";
 import Navbar from '../../components/ui/Navbar.tsx'
 
 const schema = z.object({
@@ -25,11 +26,13 @@ export default function LoginPage() {
         resolver: zodResolver(schema),
     })
 
+    const { setAuth } = useAuth()
+
     const onSubmit = async (data: FormData) => {
         setErrorMessage(null)
         try {
             const response = await login(data)
-            localStorage.setItem('token', response.token)
+            setAuth(response.user, response.token)
             navigate('/')
         } catch (error) {
             setErrorMessage('Incorrect email or password. Please try again.')

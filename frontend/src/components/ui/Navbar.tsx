@@ -1,14 +1,35 @@
+import { Link } from 'react-router';
+import { useAuth } from "../../context/AuthContext.tsx";
+import { LogOut, LogIn, SquarePlus, User } from 'lucide-react'
+
 export default function Navbar() {
+    const { isLoggedIn, user, clearAuth } = useAuth()
+
     return (
-        <div className="navbar bg-base-100 shadow-sm">
+        <nav className="navbar bg-base-100 shadow-sm">
             <div className="flex-1">
-                <a className="btn btn-ghost text-xl">Ticketing Portal</a>
+                <Link to="/" className="btn btn-ghost text-xl">Ticketing Portal</Link>
             </div>
-            <div className="flex-none">
-                <button className="btn btn-square btn-ghost">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block h-5 w-5 stroke-current"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path> </svg>
-                </button>
+            <div className="flex-none align-middle">
+                <div className="dropdown dropdown-bottom dropdown-end">
+                    <div tabIndex={0} role="button" className="btn m-1 btn-ghost btn-circle">
+                        <User />
+                    </div>
+                    <ul className="menu dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                        {isLoggedIn ? (
+                            <>
+                                <li className="px-1 my-2 text-base-content/70">Welcome, {user?.name}</li>
+                                <li><button onClick={clearAuth}><LogOut size={16} />Log Out</button></li>
+                            </>
+                        ) :
+                            <>
+                                <li><Link to="/register"><SquarePlus size={16} />Register</Link></li>
+                                <li><Link to="/login"><LogIn size={16} />Log In</Link></li>
+                            </>
+                        }
+                    </ul>
+                </div>
             </div>
-        </div>
+        </nav>
     )
 }
