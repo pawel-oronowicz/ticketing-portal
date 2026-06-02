@@ -1,13 +1,16 @@
 import { Link } from 'react-router';
 import { useAuth } from "../../context/AuthContext.tsx";
-import { LogOut, LogIn, SquarePlus, User } from 'lucide-react'
+import { LogIn, LogOut, PanelRightClose, SquarePlus, User } from 'lucide-react'
 
 export default function Navbar() {
     const { isLoggedIn, user, clearAuth } = useAuth()
 
     return (
-        <nav className="navbar bg-base-100 shadow-sm">
+        <nav data-theme="dracula" className="navbar bg-base-100 shadow-sm">
             <div className="flex-1">
+                <label htmlFor="my-drawer-4" aria-label="open sidebar" className="btn btn-square btn-ghost">
+                    <PanelRightClose className="my-1.5 inline-block size-4" />
+                </label>
                 <Link to="/" className="btn btn-ghost text-xl">Ticketing Portal</Link>
             </div>
             <div className="flex-none align-middle">

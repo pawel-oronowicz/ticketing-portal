@@ -5,7 +5,6 @@ import { login } from '../../api/auth'
 import { useNavigate } from 'react-router'
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext.tsx";
-import Navbar from '../../components/ui/Navbar.tsx'
 
 const schema = z.object({
     email: z.string().email('Invalid email'),
@@ -41,7 +40,6 @@ export default function LoginPage() {
 
     return (
         <div>
-            <Navbar />
             <div className="flex max-w-7xl mx-auto px-6 py-6 justify-center">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
