@@ -2,7 +2,7 @@ export interface User {
     id: number
     name: string
     email: string
-    role: 'admin' | 'engineer' | 'user'
+    role: 'admin' | 'engineer' | 'customer'
 }
 
 export interface RegisterCredentials {
