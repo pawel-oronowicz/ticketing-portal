@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Company;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 
 class UserService
@@ -32,5 +34,14 @@ class UserService
         }
 
         return $user;
+    }
+
+    /**
+     * @param Company $company
+     * @return Collection
+     */
+    public function findAllByCompany(Company $company): Collection
+    {
+        return $this->userRepository->findAllByCompany($company);
     }
 }
