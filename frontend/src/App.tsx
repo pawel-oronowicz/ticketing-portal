@@ -7,7 +7,8 @@ import RegisterPage from './pages/auth/RegisterPage'
 import LoginPage from './pages/auth/LoginPage'
 import Layout from './components/ui/Layout.tsx'
 import DashboardPage from "./pages/DashboardPage.tsx";
-import CompanyPage from "./pages/CompanyPage.tsx";
+import CompanyIndexPage from "./pages/CompanyIndexPage.tsx";
+import TicketIndexPage from "./pages/TicketIndexPage.tsx";
 
 const queryClient = new QueryClient()
 
@@ -25,7 +26,8 @@ export default function App() {
                     </ProtectedRoute>
                 }>
                     <Route path="/" element={<DashboardPage />} />
-                    <Route path="/companies" element={<CompanyPage />} />
+                    <Route path="/companies" element={<CompanyIndexPage />} />
+                    <Route path="/tickets" element={<TicketIndexPage />} />
                 </Route>
             </Routes>
         </QueryClientProvider>

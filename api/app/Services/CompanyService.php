@@ -9,8 +9,8 @@ class CompanyService
 {
     public function __construct(private CompanyRepository $companyRepository) {}
 
-    public function all(): Collection
+    public function findAll(): Collection
     {
-        return $this->companyRepository->all();
+        return $this->companyRepository->findAll();
     }
 }

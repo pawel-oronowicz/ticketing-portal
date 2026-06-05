@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { getCompanies } from '../api/company'
 
-export default function CompanyPage() {
+export default function CompanyIndexPage() {
     const { data: companies, isLoading, isError } = useQuery({
         queryKey: ['companies'],
         queryFn: getCompanies,

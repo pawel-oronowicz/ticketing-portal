@@ -12,7 +12,7 @@ class CompanyController extends Controller
 
     public function index()
     {
-        $companies = $this->companyService->all();
+        $companies = $this->companyService->findAll();
 
         return response()->json(CompanyResource::collection($companies));
     }

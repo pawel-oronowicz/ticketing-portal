@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginUserController;
 use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\TicketController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,4 +15,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Companies
     Route::get('/companies', [CompanyController::class, 'index']);
+
+    // Tickets
+    Route::get('/tickets', [TicketController::class, 'index']);
 });

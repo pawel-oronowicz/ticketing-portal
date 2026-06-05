@@ -2,16 +2,16 @@
 
 namespace App\Repositories;
 
-use App\Models\Company;
+use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Collection;
 
-class CompanyRepository
+class TicketRepository
 {
     /**
      * @return Collection
      */
     public function findAll(): Collection
     {
-        return Company::all();
+        return Ticket::with(['createdBy', 'assigned', 'company', 'site'])->get();
     }
 }
