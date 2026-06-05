@@ -3,6 +3,7 @@
 use App\Models\Company;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\UserService;
 
 test('finds user by email', function () {
     User::factory()->count(3)->create();
@@ -36,3 +37,15 @@ test('finds all company users', function () {
     $users = $repository->findAllByCompany($company3);
     $this->assertCount(0, $users);
 });
+
+
+test('returns null when password is incorrect', function () {
+    $repository = new UserRepository();
+    $user = User::factory()->make(['password' => Hash::make('correctpassword')]);
+
+    $service = new UserService($repository);
+    $result = $service->authenticateUser(['email' => $user->email, 'password' => 'correctpassword']);
+
+    expect($result)->toBeNull();
+});
+
