@@ -17,9 +17,9 @@ class TicketRepository
 
     /**
      * @param int $id
-     * @return Ticket
+     * @return Ticket|null
      */
-    public function findById(int $id): Ticket
+    public function findById(int $id): ?Ticket
     {
         return Ticket::with(['createdBy', 'assigned', 'company', 'site'])->find($id);
     }

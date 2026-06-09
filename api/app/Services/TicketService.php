@@ -20,9 +20,9 @@ class TicketService
 
     /**
      * @param int $id
-     * @return Ticket
+     * @return Ticket|null
      */
-    public function findById(int $id): Ticket
+    public function findById(int $id): ?Ticket
     {
         return $this->ticketRepository->findById($id);
     }

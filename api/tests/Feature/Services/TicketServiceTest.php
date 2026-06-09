@@ -1,26 +1,30 @@
 <?php
 
 use App\Enums\UserRole;
-use App\Models\Site;
-use App\Models\User;
 use App\Models\Company;
+use App\Models\Site;
 use App\Models\Ticket;
+use App\Models\User;
 use App\Repositories\TicketRepository;
-use function PHPUnit\Framework\assertNull;
+use App\Services\TicketService;
 
-test('findAll returns all tickets', function () {
+test('finds all tickets', function () {
+    $repository = new TicketRepository();
+    $service = new TicketService($repository);
+
+    $tickets = $service->findAll();
+    $this->assertCount(0, $tickets);
+
     Company::factory()->create();
     Site::factory()->create();
     User::factory()->create(['role' => UserRole::Engineer]);
     User::factory()->create(['role' => UserRole::Customer]);
     Ticket::factory()->count(3)->create();
-
-    $repository = new TicketRepository();
-    $tickets = $repository->findAll();
+    $tickets = $service->findAll();
     $this->assertCount(3, $tickets);
 });
 
-test('findById returns ticket by id', function () {
+test('finds ticket by ID', function () {
     Company::factory()->create();
     Site::factory()->create();
     User::factory()->create(['role' => UserRole::Engineer]);
@@ -28,9 +32,10 @@ test('findById returns ticket by id', function () {
     Ticket::factory()->count(3)->create();
 
     $repository = new TicketRepository();
-    $ticket = $repository->findById(1);
-    $this->assertEquals(1, $ticket->id);
+    $service = new TicketService($repository);
+    $ticket = $service->findById(2);
+    $this->assertEquals(2, $ticket->id);
 
-    $ticket = $repository->findById(4);
+    $ticket = $service->findById(123);
     $this->assertNull($ticket);
 });
