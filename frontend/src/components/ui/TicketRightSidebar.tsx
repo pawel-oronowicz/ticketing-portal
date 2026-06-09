@@ -1,6 +1,5 @@
 import { formatDateTime } from '../../utils/date'
 import type { Ticket } from '../../types/ticket'
-import {Clock} from "lucide-react";
 import {useEnums} from "../../hooks/useEnums.ts";
 
 export default function TicketRightSidebar({ticket}: { ticket: Ticket }) {
