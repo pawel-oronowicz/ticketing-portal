@@ -9,6 +9,7 @@ import Layout from './components/ui/Layout.tsx'
 import DashboardPage from "./pages/DashboardPage.tsx";
 import CompanyIndexPage from "./pages/CompanyIndexPage.tsx";
 import TicketIndexPage from "./pages/TicketIndexPage.tsx";
+import TicketViewPage from "./pages/TicketViewPage.tsx";
 
 const queryClient = new QueryClient()
 
@@ -28,6 +29,7 @@ export default function App() {
                     <Route path="/" element={<DashboardPage />} />
                     <Route path="/companies" element={<CompanyIndexPage />} />
                     <Route path="/tickets" element={<TicketIndexPage />} />
+                    <Route path="/tickets/:id" element={<TicketViewPage />} />
                 </Route>
             </Routes>
         </QueryClientProvider>

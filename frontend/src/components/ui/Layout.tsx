@@ -10,11 +10,11 @@ export default function Layout({ children }: Props) {
     return (
         <div className="drawer lg:drawer-open">
             <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
-            <div className="drawer-content">
+            <div className="flex flex-col drawer-content">
                 <Navbar />
 
                 {/* Page content injected here */}
-                <div className="p-4">
+                <div className="flex-1 bg-gray-100 p-4">
                     {children}
                 </div>
             </div>

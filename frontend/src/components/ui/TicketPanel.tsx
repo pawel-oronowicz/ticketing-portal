@@ -1,13 +1,16 @@
 import { formatDateTime } from '../../utils/date'
+import { Link } from 'react-router';
 import type { Ticket } from '../../types/ticket'
 import {Clock} from "lucide-react";
 
 export default function TicketPanel({ ticket }: { ticket: Ticket }) {
     return (
-        <tr className="bg-base-100 shadow-sm hover:bg-base-200 transition-shadow cursor-pointer">
+        <tr className="bg-base-100 shadow-sm hover:bg-base-200 transition-shadow">
             <td className="py-2 border border-gray-200">
                 <div className="flex flex-col gap-2">
-                        <div className="font-medium text-lg">{ticket.subject}</div>
+                        <div className="font-medium text-lg">
+                            <Link to={`/tickets/${ticket.id}`}><span className="hover:text-gray-500 hover:underline">{ticket.subject}</span></Link>
+                        </div>
                         <div className="flex text-sm text-base-content/50 gap-x-4">
                             <span>#{ticket.id}</span>
                             <span className="flex items-center gap-x-1"><Clock size={12} />{formatDateTime(ticket.created_at)}</span>
@@ -16,7 +19,7 @@ export default function TicketPanel({ ticket }: { ticket: Ticket }) {
             </td>
             <td className="border border-gray-200 text-center">
                 <div>
-                    <span className={ticket.status.is_finalised ? "badge badge-success" : "badge badge-neutral"}>{ticket.status.label}</span>
+                    <span className={ticket.status.is_finalised ? "badge badge-soft badge-success" : "badge badge-soft badge-info"}>{ticket.status.label}</span>
                 </div>
             </td>
             <td className="border border-gray-200">
