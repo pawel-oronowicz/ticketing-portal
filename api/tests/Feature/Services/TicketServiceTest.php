@@ -15,21 +15,21 @@ test('finds all tickets', function () {
     $tickets = $service->findAll();
     $this->assertCount(0, $tickets);
 
-    Company::factory()->create();
+    $company = Company::factory()->create();
     Site::factory()->create();
     User::factory()->create(['role' => UserRole::Engineer]);
-    User::factory()->create(['role' => UserRole::Customer]);
-    Ticket::factory()->count(3)->create();
+    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
+    Ticket::factory()->count(3)->create(['company_id' => $company->id]);
     $tickets = $service->findAll();
     $this->assertCount(3, $tickets);
 });
 
 test('finds ticket by ID', function () {
-    Company::factory()->create();
+    $company = Company::factory()->create();
     Site::factory()->create();
     User::factory()->create(['role' => UserRole::Engineer]);
-    User::factory()->create(['role' => UserRole::Customer]);
-    Ticket::factory()->count(3)->create();
+    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
+    Ticket::factory()->count(3)->create(['company_id' => $company->id]);
 
     $repository = new TicketRepository();
     $service = new TicketService($repository);
