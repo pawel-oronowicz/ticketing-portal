@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Models\Company;
 use App\Models\Site;
 use App\Models\Ticket;
+use App\Models\TicketUpdate;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -32,10 +33,28 @@ class TicketFactory extends Factory
             'subject' => fake()->sentence(),
             'created_by_user_id' => $createdBy->id,
             'assigned_user_id' => $assigned->id,
-            'status' => fake()->randomElement(TicketStatus::class),
-            'priority' => fake()->randomElement(TicketPriority::class),
+            'status' => fake()->randomElement(TicketStatus::cases()),
+            'priority' => fake()->randomElement(TicketPriority::cases()),
             'company_id' => $company->id,
             'site_id' => $site->id,
         ];
+    }
+
+    /**
+     * @return $this
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Ticket $ticket) {
+            TicketUpdate::factory()
+                ->count(rand(1, 3))
+                ->for($ticket)
+                ->create([
+                    'created_by_user_id' => fake()->randomElement([
+                        $ticket->created_by_user_id,
+                        $ticket->assigned_user_id
+                    ]),
+                ]);
+        });
     }
 }

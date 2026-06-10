@@ -14,7 +14,7 @@ class TicketController extends Controller
     /**
      * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $tickets = $this->ticketService->findAll();
 
