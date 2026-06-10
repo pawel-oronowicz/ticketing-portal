@@ -33,7 +33,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'role' => UserRole::Customer,
-            'company_id' => fake()->randomElement(Company::pluck('id')),
+            'company_id' => null
         ];
     }
 
