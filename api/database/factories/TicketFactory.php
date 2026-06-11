@@ -27,6 +27,10 @@ class TicketFactory extends Factory
         $company = Company::inRandomOrder()->first();
         $createdBy = User::where('company_id', $company->id)->inRandomOrder()->first();
         $assigned = User::where('role', UserRole::Engineer)->inRandomOrder()->first();
+
+        if($createdBy === null) {
+            $createdBy = $assigned;
+        }
         $site = Site::where('company_id', $company->id)->inRandomOrder()->first();
 
         return [
@@ -47,7 +51,7 @@ class TicketFactory extends Factory
     {
         return $this->afterCreating(function (Ticket $ticket) {
             TicketUpdate::factory()
-                ->count(rand(1, 3))
+                ->count(rand(1, 5))
                 ->for($ticket)
                 ->create([
                     'created_by_user_id' => fake()->randomElement([

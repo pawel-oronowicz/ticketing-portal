@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TicketUpdate extends Model
 {
+    protected $fillable = ['text', 'is_internal'];
+
     /** @use HasFactory<TicketUpdateFactory> */
     use HasFactory;
 
