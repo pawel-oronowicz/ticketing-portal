@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { login } from '../../api/auth'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext.tsx";
 
@@ -40,7 +40,7 @@ export default function LoginPage() {
 
     return (
         <div>
-            <div className="flex max-w-7xl mx-auto px-6 py-6 justify-center">
+            <div className="flex flex-col max-w-7xl mx-auto px-6 py-6 items-center justify-center">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
                         <legend className="fieldset-legend">Log In</legend>
@@ -72,6 +72,8 @@ export default function LoginPage() {
                         <button type="submit" disabled={isSubmitting} className="btn btn-neutral mt-4">
                             {isSubmitting ? 'Logging in...' : 'Log In'}
                         </button>
+
+                        <span className="mt-4 text-center text-sm">No account yet? <Link to="/register" className="hover:text-gray-500 hover:underline">Sign up here</Link></span>
                     </fieldset>
                 </form>
             </div>
