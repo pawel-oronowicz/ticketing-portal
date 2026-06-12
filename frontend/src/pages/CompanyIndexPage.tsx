@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getCompanies } from '../api/company'
+import { getCompanies } from '../api/companies.ts'
 
 export default function CompanyIndexPage() {
     const { data: companies, isLoading, isError } = useQuery({

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\UserRole;
 use App\Models\Company;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -34,6 +35,15 @@ class UserService
         }
 
         return $user;
+    }
+
+    /**
+     * @param string $role
+     * @return Collection
+     */
+    public function findAll(string $role): Collection
+    {
+        return $this->userRepository->findAll(UserRole::{ucfirst($role)});
     }
 
     /**

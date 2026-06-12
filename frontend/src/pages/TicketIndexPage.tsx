@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getTickets } from "../api/ticket.ts";
+import { getTickets } from "../api/tickets.ts";
 import TicketPanel from "../components/ui/TicketPanel.tsx";
 
 export default function TicketIndexPage() {

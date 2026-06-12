@@ -1,9 +1,4 @@
-export interface User {
-    id: number
-    name: string
-    email: string
-    role: 'admin' | 'engineer' | 'customer'
-}
+import type {User} from './user.ts'
 
 export interface RegisterCredentials {
     name: string

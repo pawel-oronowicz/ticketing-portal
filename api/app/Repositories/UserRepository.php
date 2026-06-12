@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\UserRole;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -15,6 +16,19 @@ class UserRepository
     public function create(array $data): User
     {
         return User::create($data);
+    }
+
+    /**
+     * @param UserRole|null $role
+     * @return Collection
+     */
+    public function findAll(?UserRole $role = null): Collection
+    {
+        if($role) {
+            return User::where('role', $role->value)->get();
+        }
+
+        return User::all();
     }
 
     /**

@@ -1,5 +1,5 @@
 import type {Company} from "./company.ts";
-import type {User} from "./auth.ts";
+import type {User} from "./user.ts";
 import type {Site} from "./site.ts";
 
 export interface TicketStatus {

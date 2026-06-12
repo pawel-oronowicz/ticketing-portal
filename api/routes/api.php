@@ -6,6 +6,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\EnumController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketUpdateController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,10 +19,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // Enums
     Route::get('/enums', [EnumController::class, 'index']);
 
+    // Users
+    Route::apiResource('/users', UserController::class);
+
     // Companies
     Route::get('/companies', [CompanyController::class, 'index']);
 
     // Tickets
-    Route::apiResource('tickets', TicketController::class);
-    Route::apiResource('tickets.updates', TicketUpdateController::class)->shallow();
+    Route::apiResource('/tickets', TicketController::class);
+    Route::apiResource('/tickets.updates', TicketUpdateController::class)->shallow();
 });
