@@ -11,7 +11,7 @@ export default function TicketPanel({ ticket }: { ticket: Ticket }) {
                         <div className="font-medium text-lg">
                             <Link to={`/tickets/${ticket.id}`}><span className="hover:text-gray-500 hover:underline">{ticket.subject}</span></Link>
                         </div>
-                        <div className="flex text-sm text-base-content/50 gap-x-4">
+                        <div className="flex text-sm text-base-content/60 gap-x-4">
                             <span>#{ticket.id}</span>
                             <span className="flex items-center gap-x-1"><Clock size={12} />{formatDateTime(ticket.created_at)}</span>
                         </div>
@@ -19,7 +19,7 @@ export default function TicketPanel({ ticket }: { ticket: Ticket }) {
             </td>
             <td className="border border-gray-200 text-center">
                 <div>
-                    <span className={ticket.status.is_finalised ? "badge badge-soft badge-success" : "badge badge-soft badge-info"}>{ticket.status.label}</span>
+                    <span className={ticket.status.is_finalised ? "badge badge-soft badge-success font-semibold" : "badge badge-soft badge-info font-semibold"}>{ticket.status.label}</span>
                 </div>
             </td>
             <td className="border border-gray-200">

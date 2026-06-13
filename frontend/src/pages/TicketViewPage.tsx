@@ -20,7 +20,7 @@ export default function TicketViewPage() {
 
     return (
         <div className="grid grid-cols-4 gap-4">
-            <TicketMainBlock ticketId={ticket.id} />
+            <TicketMainBlock ticketId={ticket.id} ticketSubject={ticket.subject} />
             <TicketRightSidebar ticket={ticket} engineers={engineers} />
         </div>
     )

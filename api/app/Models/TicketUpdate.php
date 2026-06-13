@@ -14,8 +14,19 @@ class TicketUpdate extends Model
     /** @use HasFactory<TicketUpdateFactory> */
     use HasFactory;
 
+    /**
+     * @return BelongsTo
+     */
     public function ticket(): BelongsTo
     {
         return $this->BelongsTo(Ticket::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function createdBy(): BelongsTo
+    {
+        return $this->BelongsTo(User::class, 'created_by_user_id');
     }
 }
