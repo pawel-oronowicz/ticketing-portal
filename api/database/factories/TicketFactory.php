@@ -54,10 +54,12 @@ class TicketFactory extends Factory
                 ->count(rand(1, 5))
                 ->for($ticket)
                 ->create([
-                    'created_by_user_id' => fake()->randomElement([
+                    'created_by_user_id' => $ticket->assigned_user_id !== null ?
+                        fake()->randomElement([
+                            $ticket->created_by_user_id,
+                            $ticket->assigned_user_id
+                        ]) :
                         $ticket->created_by_user_id,
-                        $ticket->assigned_user_id
-                    ]),
                 ]);
         });
     }

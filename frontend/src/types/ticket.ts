@@ -25,3 +25,9 @@ export interface Ticket {
     created_at: string
     updated_at: string
 }
+
+export interface UpdateTicketFormData {
+    status: string
+    priority: string
+    assigned_user_id: number
+}

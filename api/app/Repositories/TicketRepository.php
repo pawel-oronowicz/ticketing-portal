@@ -23,4 +23,18 @@ class TicketRepository
     {
         return Ticket::with(['createdBy', 'assigned', 'company', 'site'])->find($id);
     }
+
+    /**
+     * @param int $id
+     * @param array $data
+     * @return Ticket
+     */
+    public function update(int $id, array $data): Ticket
+    {
+        $ticket = $this->findById($id);
+
+        $ticket->update($data);
+
+        return $ticket;
+    }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\TicketPriority;
+use App\Enums\TicketStatus;
 use App\Enums\UserRole;
 use App\Models\Company;
 use App\Models\Site;
@@ -13,7 +15,7 @@ test('finds all tickets', function () {
     $service = new TicketService($repository);
 
     $tickets = $service->findAll();
-    $this->assertCount(0, $tickets);
+    expect($tickets)->toHaveCount(0);
 
     $company = Company::factory()->create();
     Site::factory()->create();
@@ -21,7 +23,7 @@ test('finds all tickets', function () {
     User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
     Ticket::factory()->count(3)->create(['company_id' => $company->id]);
     $tickets = $service->findAll();
-    $this->assertCount(3, $tickets);
+    expect($tickets)->toHaveCount(3);
 });
 
 test('finds ticket by ID', function () {
@@ -33,9 +35,62 @@ test('finds ticket by ID', function () {
 
     $repository = new TicketRepository();
     $service = new TicketService($repository);
+
     $ticket = $service->findById(2);
-    $this->assertEquals(2, $ticket->id);
+    expect($ticket->id)->toBe(2);
 
     $ticket = $service->findById(123);
-    $this->assertNull($ticket);
+    expect($ticket)->toBeNull();
+});
+
+test('engineer updates ticket with data restricted to internal users', function () {
+    $company = Company::factory()->create();
+    Site::factory()->create();
+    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
+    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
+    $ticket = Ticket::factory()->create([
+        'created_by_user_id' => $engineer->id,
+        'status' => TicketStatus::New,
+        'priority' => TicketPriority::Low,
+        'assigned_user_id' => null
+    ]);
+
+    $repository = new TicketRepository();
+    $service = new TicketService($repository);
+
+    $data = [
+        'status' => TicketStatus::InProgress,
+        'priority' => TicketPriority::High,
+        'assigned_user_id' => $engineer->id,
+    ];
+    $ticket = $service->update($ticket->id, $data, $engineer);
+    expect($ticket->status)->toBe(TicketStatus::InProgress)
+        ->and($ticket->priority)->toBe(TicketPriority::High)
+        ->and($ticket->assigned_user_id)->toBe($engineer->id);
+});
+
+test('customer cannot update ticket with data restricted to internal users', function () {
+    $company = Company::factory()->create();
+    Site::factory()->create();
+    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
+    $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
+    $ticket = Ticket::factory()->create([
+        'created_by_user_id' => $engineer->id,
+        'status' => TicketStatus::New,
+        'priority' => TicketPriority::Low,
+        'assigned_user_id' => null
+    ]);
+
+    $repository = new TicketRepository();
+    $service = new TicketService($repository);
+
+    $data = [
+        'status' => TicketStatus::InProgress,
+        'priority' => TicketPriority::High,
+        'assigned_user_id' => $engineer->id,
+    ];
+    $ticket = $service->update($ticket->id, $data, $customer);
+    expect($ticket->status)->toBe(TicketStatus::New)
+        ->and($ticket->priority)->toBe(TicketPriority::Low)
+        ->and($ticket->assigned_user_id)->toBe($engineer->null);
 });

@@ -25,8 +25,8 @@ test('finds users by company', function () {
     $service = new UserService($repository);
 
     $companyUsers = $service->findAllByCompany($company1);
-    $this->assertCount(2, $companyUsers);
+    expect($companyUsers)->toHaveCount(2);
 
     $companyUsers = $service->findAllByCompany($company3);
-    $this->assertCount(0, $companyUsers);
+    expect($companyUsers)->toHaveCount(0);
 });
