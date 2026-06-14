@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'role' => UserRole::Customer,
+            'role' => $this->role,
             'created_at'  => $this->created_at?->toISOString(),
             'updated_at'  => $this->updated_at?->toISOString(),
         ];

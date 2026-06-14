@@ -5,6 +5,7 @@ import type {User} from "../../types/user.ts";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {updateTicket} from "../../api/tickets.ts";
+import {useAuth} from "../../context/AuthContext.tsx";
 
 interface Props {
     ticket: Ticket
@@ -13,6 +14,7 @@ interface Props {
 
 export default function TicketRightSidebar({ticket, engineers}: Props) {
     const { data: enums, isLoading: enumsLoading } = useEnums()
+    const { isInternalUser } = useAuth()
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
@@ -70,38 +72,59 @@ export default function TicketRightSidebar({ticket, engineers}: Props) {
                         <span>{ticket.company?.name}</span>
                     </div>
 
-                    <div className="gap-x-1">
-                        <fieldset className="fieldset">
-                            <legend className="fieldset-legend">Assigned User</legend>
-                            <select {...register('assigned_user_id')} className="select">
-                                <option value="">-- Unassigned --</option>
-                                {engineers?.map(engineer => (
-                                    <option key={engineer.id} value={engineer.id}>{engineer.name}</option>
-                                ))}
-                            </select>
-                        </fieldset>
+                    <div>
+                        {isInternalUser ? (
+                            <fieldset className="fieldset">
+                                <legend className="fieldset-legend">Assigned User</legend>
+                                <select {...register('assigned_user_id')} className="select">
+                                    <option value="">-- Unassigned --</option>
+                                    {engineers?.map(engineer => (
+                                        <option key={engineer.id} value={engineer.id}>{engineer.name}</option>
+                                    ))}
+                                </select>
+                            </fieldset>
+                            ) :
+                            <>
+                                <span className="fieldset-legend text-xs">Assigned User</span>
+                                <span>{ticket.assigned_user ? ticket.assigned_user.name : '-'}</span>
+                            </>
+                        }
                     </div>
 
                     <div>
-                        <fieldset className="fieldset">
-                            <legend className="fieldset-legend">Status</legend>
-                            <select {...register('status')} className="select">
-                                {ticketStatuses.map((item: { value: number, label: string }) => (
-                                    <option key={item.value} value={item.value}>{item.label}</option>
-                                ))}
-                            </select>
-                        </fieldset>
+                        {isInternalUser ? (
+                            <fieldset className="fieldset">
+                                <legend className="fieldset-legend">Status</legend>
+                                <select {...register('status')} className="select">
+                                    {ticketStatuses.map((item: { value: number, label: string }) => (
+                                        <option key={item.value} value={item.value}>{item.label}</option>
+                                    ))}
+                                </select>
+                            </fieldset>
+                            ) :
+                            <>
+                                <span className="fieldset-legend text-xs">Status</span>
+                                <span>{ticket.status.label}</span>
+                            </>
+                        }
                     </div>
 
                     <div>
-                        <fieldset className="fieldset">
-                            <legend className="fieldset-legend">Priority</legend>
-                            <select {...register('priority')} className="select">
-                                {ticketPriorities.map((item: { value: number, label: string }) => (
-                                    <option key={item.value} value={item.value}>{item.label}</option>
-                                ))}
-                            </select>
-                        </fieldset>
+                        {isInternalUser ? (
+                            <fieldset className="fieldset">
+                                <legend className="fieldset-legend">Priority</legend>
+                                <select {...register('priority')} className="select">
+                                    {ticketPriorities.map((item: { value: number, label: string }) => (
+                                        <option key={item.value} value={item.value}>{item.label}</option>
+                                    ))}
+                                </select>
+                            </fieldset>
+                            ) :
+                            <>
+                                <span className="fieldset-legend text-xs">Priority</span>
+                                <span>{ticket.priority.label}</span>
+                            </>
+                        }
                     </div>
 
                     {errorMessage && (
@@ -116,11 +139,14 @@ export default function TicketRightSidebar({ticket, engineers}: Props) {
                         </div>
                     )}
 
-                    <div className="mt-8">
-                        <button type="submit" disabled={isSubmitting} className="btn btn-success w-36 h-12">
-                            {isSubmitting ? 'Saving...' : 'Save'}
-                        </button>
-                    </div>
+                    {isInternalUser ? (
+                        <div className="mt-8">
+                            <button type="submit" disabled={isSubmitting} className="btn btn-success w-36 h-12">
+                                {isSubmitting ? 'Saving...' : 'Save'}
+                            </button>
+                        </div>
+                        ) : ''
+                    }
                 </form>
             </div>
         </div>

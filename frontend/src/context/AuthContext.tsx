@@ -4,6 +4,7 @@ interface User {
     id: number
     name: string
     email: string
+    role: string
 }
 
 interface AuthContextType {
@@ -12,6 +13,10 @@ interface AuthContextType {
     setAuth: (user: User, token: string) => void
     clearAuth: () => void
     isLoggedIn: boolean
+    isAdmin: boolean
+    isEngineer: boolean
+    isCustomer: boolean
+    isInternalUser: boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -39,6 +44,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null)
     }
 
+    const isAdmin = user?.role === 'admin'
+    const isEngineer = user?.role === 'engineer'
+    const isCustomer = user?.role === 'customer'
+    const isInternalUser = isAdmin || isEngineer
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -46,6 +56,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setAuth,
             clearAuth,
             isLoggedIn: !!token,
+            isAdmin,
+            isEngineer,
+            isCustomer,
+            isInternalUser,
         }}>
             {children}
         </AuthContext.Provider>
