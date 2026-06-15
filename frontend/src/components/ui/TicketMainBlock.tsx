@@ -13,9 +13,9 @@ export default function TicketMainBlock({ ticketId, ticketSubject }: { ticketId:
 
     return (
         <div className="border border-gray-200 col-span-3">
-            <span className="flex text-sm ml-4 gap-x-2">
-                <span className="flex items-center text-base-content/60">#{ticketId}</span>
-                <h2 className="py-4 text-lg font-semibold">{ticketSubject}</h2>
+            <span className="flex ml-4 py-2 gap-x-2">
+                <span className="flex text-sm items-center text-base-content/60">#{ticketId}</span>
+                <h2 className="py-4 text-xl font-semibold">{ticketSubject}</h2>
             </span>
             {updates.map(update => (
                 <TicketUpdatePanel key={update.id} update={update} />

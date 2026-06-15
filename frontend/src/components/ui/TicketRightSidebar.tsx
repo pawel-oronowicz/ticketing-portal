@@ -34,7 +34,7 @@ export default function TicketRightSidebar({ticket, engineers}: Props) {
         setErrorMessage(null)
         setSuccessMessage(null)
         try {
-            const response = await updateTicket(ticket.id, data)
+            await updateTicket(ticket.id, data)
             setSuccessMessage('Ticket successfully updated')
         } catch (error) {
             setErrorMessage('Something went wrong. Please try again')
@@ -48,8 +48,8 @@ export default function TicketRightSidebar({ticket, engineers}: Props) {
 
     return (
         <div className="bg-white border border-gray-200 text-sm p-2">
-            <div className="grid">
-                <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="grid gap-y-2">
                     <div
                         className={ticket.status.is_finalised ?
                             "badge badge-soft badge-success text-xl font-semibold p-4" :
@@ -57,7 +57,7 @@ export default function TicketRightSidebar({ticket, engineers}: Props) {
                         {ticket.status.label}
                     </div>
 
-                    <div className="gap-x-1 mt-4">
+                    <div className="gap-x-1">
                         <span className="fieldset-legend text-xs">Created</span>
                         <span>{formatDateTime(ticket.created_at)}</span>
                     </div>
@@ -140,15 +140,15 @@ export default function TicketRightSidebar({ticket, engineers}: Props) {
                     )}
 
                     {isInternalUser ? (
-                        <div className="mt-8">
-                            <button type="submit" disabled={isSubmitting} className="btn btn-success w-36 h-12">
+                        <div className="mt-4">
+                            <button type="submit" disabled={isSubmitting} className="btn btn-outline w-24">
                                 {isSubmitting ? 'Saving...' : 'Save'}
                             </button>
                         </div>
                         ) : ''
                     }
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     )
 }
