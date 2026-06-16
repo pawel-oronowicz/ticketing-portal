@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\UserRole;
+use App\Models\Company;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Repositories\TicketRepository;
@@ -29,6 +30,24 @@ class TicketService
     public function findById(int $id): ?Ticket
     {
         return $this->ticketRepository->findById($id);
+    }
+
+    /**
+     * @param User $user
+     * @return Collection
+     */
+    public function findForUser(User $user): Collection
+    {
+        if($user->role->isInternal()) {
+            $tickets = $this->ticketRepository->findAll();
+        } else {
+            if(!$user->company) {
+                return new Collection();
+            }
+            $tickets = $this->ticketRepository->findAllByCompany($user->company);
+        }
+
+        return $tickets;
     }
 
     /**

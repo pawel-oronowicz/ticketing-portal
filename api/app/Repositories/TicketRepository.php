@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Company;
 use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -13,6 +14,17 @@ class TicketRepository
     public function findAll(): Collection
     {
         return Ticket::with(['createdBy', 'assigned', 'company', 'site'])->get();
+    }
+
+    /**
+     * @param Company $company
+     * @return Collection
+     */
+    public function findAllByCompany(Company $company): Collection
+    {
+        return Ticket::with(['createdBy', 'assigned', 'company', 'site'])
+            ->where('company_id', $company->id)
+            ->get();
     }
 
     /**

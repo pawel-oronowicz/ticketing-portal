@@ -17,7 +17,7 @@ class TicketController extends Controller
      */
     public function index(): JsonResponse
     {
-        $tickets = $this->ticketService->findAll();
+        $tickets = $this->ticketService->findForUser(auth()->user());
 
         return response()->json(TicketResource::collection($tickets));
     }

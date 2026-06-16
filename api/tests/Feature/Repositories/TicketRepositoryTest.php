@@ -37,6 +37,26 @@ test('finds ticket by ID', function () {
     $this->assertNull($ticket);
 });
 
+test('finds tickets by company', function () {
+    $repository = new TicketRepository();
+
+    $company = Company::factory()->create();
+    Site::factory()->create();
+    User::factory()->create(['role' => UserRole::Engineer]);
+    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
+    Ticket::factory()->count(3)->create(['company_id' => $company->id]);
+
+    $tickets = $repository->findAllByCompany($company);
+    expect($tickets)->toHaveCount(3);
+
+    $company2 = Company::factory()->create();
+    Site::factory()->create();
+    Ticket::factory()->count(2)->create(['company_id' => $company2->id]);
+
+    $tickets = $repository->findAllByCompany($company2);
+    expect($tickets)->toHaveCount(2);
+});
+
 test('user updates ticket with data restricted to internal users', function () {
     $company = Company::factory()->create();
     Site::factory()->create();
