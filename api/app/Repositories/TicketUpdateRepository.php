@@ -16,7 +16,9 @@ class TicketUpdateRepository
     public function findAllByTicket(Ticket $ticket): Collection
     {
         return TicketUpdate::with(['createdBy'])
-            ->where('ticket_id', $ticket->id)->get();
+            ->where('ticket_id', $ticket->id)
+            ->orderBy('created_at')
+            ->get();
     }
 
     /**
