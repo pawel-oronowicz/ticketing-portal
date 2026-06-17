@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\TicketUpdate;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -13,7 +14,7 @@ class TicketUpdatePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +22,7 @@ class TicketUpdatePolicy
      */
     public function view(User $user, TicketUpdate $ticketUpdate): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +30,7 @@ class TicketUpdatePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**

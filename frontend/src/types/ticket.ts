@@ -31,3 +31,7 @@ export interface UpdateTicketFormData {
     priority: string
     assigned_user_id: number
 }
+
+export interface PostTicketUpdateFormData {
+    text: string
+}

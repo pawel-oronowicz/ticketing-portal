@@ -11,7 +11,19 @@ import CompanyIndexPage from "./pages/CompanyIndexPage.tsx";
 import TicketIndexPage from "./pages/TicketIndexPage.tsx";
 import TicketViewPage from "./pages/TicketViewPage.tsx";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: (failureCount, error: any) => {
+                // Don't retry on 4xx errors
+                if (error?.response?.status >= 400 && error?.response?.status < 500) {
+                    return false
+                }
+                return failureCount < 3
+            }
+        }
+    }
+})
 
 export default function App() {
     return (

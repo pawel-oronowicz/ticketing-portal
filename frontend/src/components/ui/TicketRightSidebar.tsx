@@ -121,8 +121,6 @@ export default function TicketRightSidebar({ticket, engineers}: Props) {
                             </fieldset>
                             ) :
                             <>
-                                <span className="fieldset-legend text-xs">Priority</span>
-                                <span>{ticket.priority.label}</span>
                             </>
                         }
                     </div>
