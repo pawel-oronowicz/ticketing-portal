@@ -13,7 +13,7 @@ class CompanyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return in_array($user->role, [UserRole::Admin, UserRole::Engineer, UserRole::Customer]);
+        return true;
     }
 
     /**

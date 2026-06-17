@@ -13,7 +13,7 @@ class TicketPolicy
      */
     public function viewAny(User $user): bool
     {
-        return in_array($user->role, [UserRole::Admin, UserRole::Engineer, UserRole::Customer]);
+        return true;
     }
 
     /**
@@ -33,7 +33,7 @@ class TicketPolicy
      */
     public function create(User $user): bool
     {
-        return in_array($user->role, [UserRole::Admin, UserRole::Engineer, UserRole::Customer]);
+        return true;
     }
 
     /**
