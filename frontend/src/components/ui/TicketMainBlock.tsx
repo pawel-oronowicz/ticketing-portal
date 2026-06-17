@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import {useQuery, useQueryClient} from '@tanstack/react-query'
 import {getTicketUpdates, createTicketUpdate} from '../../api/ticketUpdates.ts'
 import TicketUpdatePanel from "./TicketUpdatePanel.tsx";
 import {useForm} from "react-hook-form";
@@ -16,8 +16,11 @@ export default function TicketMainBlock({ ticket }: { ticket: Ticket }) {
     const {
         register,
         handleSubmit,
+        reset,
         formState: { isSubmitting },
     } = useForm<PostTicketUpdateFormData>()
+
+    const queryClient = useQueryClient()
 
     const onSubmit = async (data: PostTicketUpdateFormData) => {
         setErrorMessage(null)
@@ -25,6 +28,8 @@ export default function TicketMainBlock({ ticket }: { ticket: Ticket }) {
         try {
             await createTicketUpdate(ticket.id, data)
             setSuccessMessage('Response successfully posted')
+            reset()
+            await queryClient.invalidateQueries({queryKey: ['ticketUpdates', ticket.id]})
         } catch (error) {
             setErrorMessage('Something went wrong. Please try again')
         }
