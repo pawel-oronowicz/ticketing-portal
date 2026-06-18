@@ -6,7 +6,6 @@ use App\Http\Requests\PostTicketUpdateRequest;
 use App\Http\Resources\TicketUpdateResource;
 use App\Models\Ticket;
 use App\Models\TicketUpdate;
-use App\Services\TicketService;
 use App\Services\TicketUpdateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
