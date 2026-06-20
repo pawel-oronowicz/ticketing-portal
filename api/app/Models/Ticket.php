@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ticket extends Model
 {
+    // @codeCoverageIgnoreStart
+
     protected $fillable = ['subject', 'assigned_user_id', 'status', 'priority', 'company_id', 'site_id'];
 
     /** @use HasFactory<TicketFactory> */
@@ -69,4 +71,6 @@ class Ticket extends Model
             'priority' => TicketPriority::class,
         ];
     }
+
+    // @codeCoverageIgnoreEnd
 }

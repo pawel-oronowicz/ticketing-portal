@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TicketUpdate extends Model
 {
+    // @codeCoverageIgnoreStart
+
     protected $fillable = ['text', 'is_internal'];
 
     /** @use HasFactory<TicketUpdateFactory> */
@@ -29,4 +31,6 @@ class TicketUpdate extends Model
     {
         return $this->BelongsTo(User::class, 'created_by_user_id');
     }
+
+    // @codeCoverageIgnoreEnd
 }

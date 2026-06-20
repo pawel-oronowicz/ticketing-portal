@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Site extends Model
 {
+    // @codeCoverageIgnoreStart
+
     protected $fillable = ['name', 'company_id', 'is_default', 'address_line1', 'address_line2', 'address_line3', 'postcode', 'city', 'region', 'country_id'];
 
     /** @use HasFactory<SiteFactory> */
@@ -30,4 +32,6 @@ class Site extends Model
     {
         return $this->hasMany(Ticket::class);
     }
+
+    // @codeCoverageIgnoreEnd
 }

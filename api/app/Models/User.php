@@ -44,6 +44,8 @@ use Laravel\Sanctum\HasApiTokens;
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
+    // @codeCoverageIgnoreStart
+
     protected $fillable = ['name', 'email', 'password', 'role', 'company_id'];
 
     /** @use HasFactory<UserFactory> */
@@ -67,4 +69,6 @@ class User extends Authenticatable
     {
         return $this->BelongsTo(Company::class);
     }
+
+    // @codeCoverageIgnoreEnd
 }

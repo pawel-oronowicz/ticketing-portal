@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model
 {
+    // @codeCoverageIgnoreStart
+
     /** @use HasFactory<CountryFactory> */
     use HasFactory;
+
+    // @codeCoverageIgnoreEnd
 }

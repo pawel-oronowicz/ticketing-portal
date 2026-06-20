@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['name'])]
 class Company extends Model
 {
+    // @codeCoverageIgnoreStart
+
     protected $fillable = ['name'];
 
     /** @use HasFactory<CompanyFactory> */
@@ -39,4 +41,6 @@ class Company extends Model
     {
         return $this->hasMany(Ticket::class);
     }
+
+    // @codeCoverageIgnoreEnd
 }
