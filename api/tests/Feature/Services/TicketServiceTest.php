@@ -113,7 +113,7 @@ test('customer cannot update ticket with data restricted to internal users', fun
         'assigned_user_id' => $engineer->id,
     ];
     $ticket = $service->update($ticket->id, $data, $customer);
-    expect($ticket->status)->toBe(TicketStatus::New)
+    expect($ticket->status)->toBe(TicketStatus::InProgress)
         ->and($ticket->priority)->toBe(TicketPriority::Low)
         ->and($ticket->assigned_user_id)->toBe($engineer->null);
 });

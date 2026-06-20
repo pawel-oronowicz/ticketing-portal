@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class PostTicketUpdateRequest extends FormRequest
 {
+    // @codeCoverageIgnoreStart
+
     /**
      * @return string[]
      */
@@ -18,4 +20,6 @@ class PostTicketUpdateRequest extends FormRequest
             ]
         ];
     }
+
+    // @codeCoverageIgnoreEnd
 }

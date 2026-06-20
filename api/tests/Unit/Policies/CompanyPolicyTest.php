@@ -5,6 +5,24 @@ use App\Models\Company;
 use App\Models\User;
 use App\Policies\CompanyPolicy;
 
+test('admin or engineer can view the company list', function () {
+    $admin = User::factory()->make(['role' => UserRole::Admin]);
+    $engineer = User::factory()->make(['role' => UserRole::Engineer]);
+
+    $policy = new CompanyPolicy();
+
+    expect($policy->viewAny($admin))->toBeTrue()
+        ->and($policy->viewAny($engineer))->toBeTrue();
+});
+
+test('customer cannot view the company list', function () {
+    $customer = User::factory()->make(['role' => UserRole::Customer]);
+
+    $policy = new CompanyPolicy();
+
+    expect($policy->viewAny($customer))->toBeFalse();
+});
+
 test('admin or engineer can view any company', function () {
     $company1 = Company::factory()->make(['id' => 1]);
     $company2 = Company::factory()->make(['id' => 2]);

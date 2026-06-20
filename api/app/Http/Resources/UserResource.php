@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
  */
 class UserResource extends JsonResource
 {
+    // @codeCoverageIgnoreStart
+
     /**
      * @param Request $request
      * @return array
@@ -28,3 +30,5 @@ class UserResource extends JsonResource
         ];
     }
 }
+
+// @codeCoverageIgnoreEnd

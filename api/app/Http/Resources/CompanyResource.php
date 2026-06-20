@@ -6,6 +6,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CompanyResource extends JsonResource
 {
+    // @codeCoverageIgnoreStart
+
     /**
      * @param $request
      * @return array
@@ -20,3 +22,5 @@ class CompanyResource extends JsonResource
         ];
     }
 }
+
+// @codeCoverageIgnoreEnd

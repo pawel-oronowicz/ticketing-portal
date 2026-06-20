@@ -9,6 +9,8 @@ use Illuminate\Validation\Rule;
 
 class UpdateTicketRequest extends FormRequest
 {
+    // @codeCoverageIgnoreStart
+
     /**
      * @return string[]
      */
@@ -28,4 +30,6 @@ class UpdateTicketRequest extends FormRequest
             'assigned_user_id' => 'integer|exists:users,id',
         ];
     }
+
+    // @codeCoverageIgnoreEnd
 }

@@ -1,17 +1,18 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\Company;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
 
 test('finds user by email', function () {
+    $repository = new UserRepository();
     User::factory()->count(3)->create();
 
     $email = 'johndoe@example.com';
     User::factory()->create(['email' => $email]);
 
-    $repository = new UserRepository();
     $user = $repository->findByEmail($email);
     $this->assertEquals($email, $user->email);
 
@@ -19,7 +20,29 @@ test('finds user by email', function () {
     $this->assertNull($user);
 });
 
+test('finds all users', function () {
+    $repository = new UserRepository();
+    User::factory()->count(3)->create();
+
+    $users = $repository->findAll();
+    $this->assertCount(3, $users);
+});
+
+test('finds users by role', function () {
+    $repository = new UserRepository();
+    User::factory()->count(3)->create([
+        'role' => UserRole::Customer,
+    ]);
+    User::factory()->count(2)->create([
+        'role' => UserRole::Engineer,
+    ]);
+
+    $users = $repository->findAll(UserRole::Engineer);
+    $this->assertCount(2, $users);
+});
+
 test('finds all company users', function () {
+    $repository = new UserRepository();
     $company1 = Company::factory()->create();
     $company2 = Company::factory()->create();
     $company3 = Company::factory()->create();
@@ -27,7 +50,6 @@ test('finds all company users', function () {
     User::factory()->count(2)->create(['company_id' => $company1->id]);
     User::factory()->count(3)->create(['company_id' => $company2->id]);
 
-    $repository = new UserRepository();
     $users = $repository->findAllByCompany($company1);
     $this->assertCount(2, $users);
 

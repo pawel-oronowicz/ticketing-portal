@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\Company;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -29,4 +30,18 @@ test('finds users by company', function () {
 
     $companyUsers = $service->findAllByCompany($company3);
     expect($companyUsers)->toHaveCount(0);
+});
+
+test('finds users by role', function () {
+    $repository = new UserRepository();
+    $service = new UserService($repository);
+    User::factory()->count(3)->create([
+        'role' => UserRole::Customer,
+    ]);
+    User::factory()->count(2)->create([
+        'role' => UserRole::Engineer,
+    ]);
+
+    $users = $service->findAll(UserRole::Engineer->value);
+    $this->assertCount(2, $users);
 });

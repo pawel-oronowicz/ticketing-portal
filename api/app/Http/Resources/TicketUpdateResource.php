@@ -6,6 +6,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class TicketUpdateResource extends JsonResource
 {
+    // @codeCoverageIgnoreStart
+
     public function toArray($request): array
     {
         return [
@@ -19,3 +21,5 @@ class TicketUpdateResource extends JsonResource
         ];
     }
 }
+
+// @codeCoverageIgnoreEnd

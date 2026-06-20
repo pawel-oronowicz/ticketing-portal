@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Enums\UserRole;
-use App\Models\Company;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Repositories\TicketRepository;
@@ -13,7 +12,7 @@ class TicketService
 {
     public function __construct(private TicketRepository $ticketRepository) {}
 
-    private array $restrictedFields = ['status', 'priority', 'assigned_user_id'];
+    private array $restrictedFields = ['priority', 'assigned_user_id'];
 
     /**
      * @return Collection

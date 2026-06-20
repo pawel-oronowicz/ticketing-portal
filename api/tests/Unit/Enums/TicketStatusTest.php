@@ -18,5 +18,7 @@ test('isFinalised returns true for open tickets', function () {
 
 test('label returns a human-readable string', function () {
     expect(TicketStatus::InProgress->label())->toBe('In Progress')
-        ->and(TicketStatus::OnHold->label())->toBe('On Hold');
+        ->and(TicketStatus::OnHold->label())->toBe('On Hold')
+        ->and(TicketStatus::Resolved->label())->toBe('Resolved')
+        ->and(TicketStatus::Closed->label())->toBe('Closed');
 });

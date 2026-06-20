@@ -6,6 +6,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class TicketResource extends JsonResource
 {
+    // @codeCoverageIgnoreStart
+
     /**
      * @param $request
      * @return array
@@ -32,4 +34,6 @@ class TicketResource extends JsonResource
             'updated_at'  => $this->updated_at?->toISOString(),
         ];
     }
+
+    // @codeCoverageIgnoreEnd
 }

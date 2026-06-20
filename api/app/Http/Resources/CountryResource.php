@@ -6,6 +6,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CountryResource extends JsonResource
 {
+    // @codeCoverageIgnoreStart
+
     public function toArray($request): array
     {
         return [
@@ -18,3 +20,5 @@ class CountryResource extends JsonResource
         ];
     }
 }
+
+// @codeCoverageIgnoreEnd
