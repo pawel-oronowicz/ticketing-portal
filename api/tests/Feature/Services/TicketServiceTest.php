@@ -66,6 +66,20 @@ test('finds tickets for user', function () {
     expect($tickets)->toHaveCount(3);
 });
 
+test('findsForUser returns empty collection if user has no company', function () {
+    $repository = new TicketRepository();
+    $service = new TicketService($repository);
+
+    $company = Company::factory()->create();
+    Site::factory()->create();
+    User::factory()->create(['role' => UserRole::Engineer]);
+    $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => null]);
+
+    Ticket::factory()->count(3)->create(['company_id' => $company->id]);
+    $tickets = $service->findForUser($customer);
+    expect($tickets)->toHaveCount(0);
+});
+
 test('engineer updates ticket with data restricted to internal users', function () {
     $company = Company::factory()->create();
     Site::factory()->create();

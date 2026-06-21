@@ -11,7 +11,7 @@ class TicketUpdate extends Model
 {
     // @codeCoverageIgnoreStart
 
-    protected $fillable = ['text', 'is_internal'];
+    protected $fillable = ['text', 'is_internal', 'ticket_id'];
 
     /** @use HasFactory<TicketUpdateFactory> */
     use HasFactory;
