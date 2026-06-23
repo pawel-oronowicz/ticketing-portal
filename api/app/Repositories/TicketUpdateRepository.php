@@ -11,14 +11,21 @@ class TicketUpdateRepository
 {
     /**
      * @param Ticket $ticket
+     * @param bool|null $excludeInternal
      * @return Collection
      */
-    public function findAllByTicket(Ticket $ticket): Collection
+    public function findAllByTicket(Ticket $ticket, ?bool $excludeInternal = false): Collection
     {
-        return TicketUpdate::with(['createdBy'])
-            ->where('ticket_id', $ticket->id)
-            ->orderBy('created_at')
-            ->get();
+        $ticketUpdates = TicketUpdate::with(['createdBy'])
+            ->where('ticket_id', $ticket->id);
+
+        if ($excludeInternal) {
+            $ticketUpdates = $ticketUpdates->where('is_internal', false);
+        }
+
+        $ticketUpdates = $ticketUpdates->orderBy('created_at')->get();
+
+        return $ticketUpdates;
     }
 
     /**

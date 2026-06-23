@@ -4,6 +4,7 @@ import TicketUpdatePanel from "./TicketUpdatePanel.tsx";
 import {useForm} from "react-hook-form";
 import type {PostTicketUpdateFormData, Ticket} from "../../types/ticket.ts";
 import {useState} from "react";
+import {useAuth} from "../../context/AuthContext.tsx";
 
 export default function TicketMainBlock({ ticket }: { ticket: Ticket }) {
     const { data: updates, isLoading } = useQuery({
@@ -12,6 +13,7 @@ export default function TicketMainBlock({ ticket }: { ticket: Ticket }) {
     })
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
+    const { isInternalUser } = useAuth()
 
     const {
         register,
@@ -51,7 +53,18 @@ export default function TicketMainBlock({ ticket }: { ticket: Ticket }) {
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="py-8 px-4 w-full">
-                    <textarea {...register('text')} className="textarea w-full h-48" placeholder="Type your response here..."></textarea>
+                    <textarea {...register('text')} className="textarea w-full h-48" placeholder="Type your response here..." required></textarea>
+
+                    {isInternalUser ? (
+                        <fieldset className="fieldset w-64 mt-4">
+                            <label className="label text-sm">
+                                <input {...register('is_internal')} type="checkbox" defaultChecked={false} className="checkbox" />
+                                Internal update
+                            </label>
+                        </fieldset>
+                    ) :
+                        <></>
+                    }
                 </div>
 
                 {errorMessage && (

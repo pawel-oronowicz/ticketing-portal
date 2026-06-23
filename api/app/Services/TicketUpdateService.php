@@ -14,11 +14,16 @@ class TicketUpdateService
 
     /**
      * @param Ticket $ticket
+     * @param User $user
      * @return Collection
      */
-    public function findAllByTicket(Ticket $ticket): Collection
+    public function findAllByTicket(Ticket $ticket, User $user): Collection
     {
-        return $this->ticketUpdateRepository->findAllByTicket($ticket);
+        if($user->role->isInternal()) {
+            return $this->ticketUpdateRepository->findAllByTicket($ticket);
+        }
+
+        return $this->ticketUpdateRepository->findAllByTicket($ticket, true);
     }
 
     /**

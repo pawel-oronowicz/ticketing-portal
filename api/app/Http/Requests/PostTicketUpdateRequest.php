@@ -17,6 +17,9 @@ class PostTicketUpdateRequest extends FormRequest
             'text' => [
                 'required',
                 'string',
+            ],
+            'is_internal' => [
+                'boolean',
             ]
         ];
     }

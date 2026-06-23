@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class TicketFactory extends Factory
 {
+    protected int $updateCount = 0;
+
     /**
      * Define the model's default state.
      *
@@ -47,13 +49,28 @@ class TicketFactory extends Factory
     /**
      * @return $this
      */
+    public function withUpdates(int $count): static
+    {
+        $clone = clone $this;
+        $clone->updateCount = $count;
+        return $clone;
+    }
+
+    /**
+     * @return $this
+     */
     public function configure(): static
     {
         return $this->afterCreating(function (Ticket $ticket) {
+            if ($this->updateCount === 0) {
+                return;
+            }
+
             TicketUpdate::factory()
-                ->count(rand(1, 5))
+                ->count($this->updateCount)
                 ->for($ticket)
                 ->create([
+                    'is_internal' => false,
                     'created_by_user_id' => $ticket->assigned_user_id !== null ?
                         fake()->randomElement([
                             $ticket->created_by_user_id,

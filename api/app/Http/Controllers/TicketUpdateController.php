@@ -22,7 +22,7 @@ class TicketUpdateController extends Controller
     {
         abort_if(Gate::denies('view', $ticket), 404);
 
-        $ticketUpdates = $this->ticketUpdateService->findAllByTicket($ticket);
+        $ticketUpdates = $this->ticketUpdateService->findAllByTicket($ticket, auth()->user());
 
         return response()->json(TicketUpdateResource::collection($ticketUpdates));
     }

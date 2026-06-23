@@ -34,4 +34,5 @@ export interface UpdateTicketFormData {
 
 export interface PostTicketUpdateFormData {
     text: string
+    is_internal: boolean
 }

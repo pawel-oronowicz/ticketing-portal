@@ -9,6 +9,9 @@ export default function TicketUpdatePanel({ update }: { update: TicketUpdate }) 
                 <span className="flex items-center gap-x-4">
                     <span className="font-semibold">{update.created_by_user?.name}</span>
                     <span className="flex items-center gap-x-1 text-sm text-base-content/60"><Clock size={12} />{formatDateTime(update.created_at)}</span>
+                    {update.is_internal && (
+                        <span className="text-sm text-blue-500 font-semibold">(internal)</span>
+                    )}
                 </span>
 
                 <p>{update.text}</p>
