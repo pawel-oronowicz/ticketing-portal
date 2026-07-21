@@ -10,3 +10,12 @@ frontend/dist/
 
 # Docker
 .env
+.env.deploy
+
+# Deployment scripts
+deploy-backend.ps1
+deploy-frontend.ps1
+
+# Storage
+storage/logs/*
+storage/framework/testing
