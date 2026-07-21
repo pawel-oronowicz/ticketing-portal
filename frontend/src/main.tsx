@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router'
 import { AuthProvider } from './context/AuthContext'
 
 createRoot(document.getElementById('root')!).render(
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.PROD ? '/ticketing-portal' : '/'}>
         <AuthProvider>
             <App />
         </AuthProvider>
