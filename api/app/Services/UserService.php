@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Enums\UserRole;
+use App\Mail\WelcomeEmail;
 use App\Models\Company;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Mail;
 
 class UserService
 {
@@ -19,7 +21,11 @@ class UserService
      */
     public function createUser(array $data): User
     {
-        return $this->userRepository->create($data);
+        $user = $this->userRepository->create($data);
+
+        Mail::to($user)->queue(new WelcomeEmail($user));
+
+        return $user;
     }
 
     /**
