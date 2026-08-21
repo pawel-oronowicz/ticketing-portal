@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\TicketUpdateCreated;
 use App\Models\Ticket;
 use App\Models\TicketUpdate;
 use App\Models\User;
@@ -34,6 +35,10 @@ class TicketUpdateService
      */
     public function createTicketUpdate(Ticket $ticket, array $data, User $user): TicketUpdate
     {
-        return $this->ticketUpdateRepository->create($ticket, $data, $user);
+        $ticketUpdate = $this->ticketUpdateRepository->create($ticket, $data, $user);
+
+        TicketUpdateCreated::dispatch($ticketUpdate);
+
+        return $ticketUpdate;
     }
 }

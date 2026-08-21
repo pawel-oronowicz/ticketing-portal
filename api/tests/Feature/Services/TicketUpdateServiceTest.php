@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\UserRole;
+use App\Events\TicketUpdateCreated;
 use App\Models\Company;
 use App\Models\Site;
 use App\Models\Ticket;
@@ -51,27 +52,39 @@ test('finds non-internal updates for ticket for customer user', function () {
     expect($ticketUpdates)->count()->toBe(2);
 });
 
-test('creates a ticket update', function () {
-    $repository = new TicketUpdateRepository();
-    $service = new TicketUpdateService($repository);
+test('creating a ticket update via API dispatches TicketUpdateCreated event', function () {
+    Event::fake();
 
-    $company = Company::factory()->create();
+    Company::factory()->create();
     Site::factory()->create();
-    User::factory()->create(['role' => UserRole::Engineer]);
-    $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
-    $ticket = Ticket::factory()->create(['company_id' => $company->id]);
+    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
+    $ticket = Ticket::factory()->create();
 
-    $ticketUpdates = $service->findAllByTicket($ticket, $customer);
-    $count = count($ticketUpdates);
+    $response = $this->actingAs($engineer)->postJson("/api/tickets/{$ticket->id}/updates", [
+        'text' => 'Test update',
+    ]);
 
-    $data = [
+    $response->assertStatus(201);
+
+    Event::assertDispatched(TicketUpdateCreated::class, function ($event) use ($response) {
+        return $event->ticketUpdate->id === $response->json('id');
+    });
+});
+
+test('creating a ticket update via API persists it to the database', function () {
+    Company::factory()->create();
+    Site::factory()->create();
+    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
+    $ticket = Ticket::factory()->create();
+
+    $response = $this->actingAs($engineer)->postJson("/api/tickets/{$ticket->id}/updates", [
+        'text' => 'Test update',
+    ]);
+
+    $response->assertStatus(201);
+
+    $this->assertDatabaseHas('ticket_updates', [
         'ticket_id' => $ticket->id,
-        'text' => 'Random string',
-    ];
-    $service->createTicketUpdate($ticket, $data, $customer);
-
-    $ticketUpdates = $service->findAllByTicket($ticket, $customer);
-    $countUpdated = count($ticketUpdates);
-
-    expect($countUpdated)->toBe($count + 1);
+        'text' => 'Test update',
+    ]);
 });
