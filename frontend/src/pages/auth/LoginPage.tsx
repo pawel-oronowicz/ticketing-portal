@@ -5,6 +5,7 @@ import { login } from '../../api/auth'
 import { Link, useNavigate } from 'react-router'
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext.tsx";
+import { useSystemSettings } from "../../hooks/useSystemSettings.ts";
 
 const schema = z.object({
     email: z.string().email('Invalid email'),
@@ -15,6 +16,7 @@ type FormData = z.infer<typeof schema>
 
 export default function LoginPage() {
     const navigate = useNavigate()
+    const { data: systemSettings, isLoading: systemSettingsLoading } = useSystemSettings()
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const {
@@ -26,6 +28,8 @@ export default function LoginPage() {
     })
 
     const { setAuth } = useAuth()
+
+    if (systemSettingsLoading) return <p>Loading...</p>
 
     const onSubmit = async (data: FormData) => {
         setErrorMessage(null)
@@ -73,7 +77,9 @@ export default function LoginPage() {
                             {isSubmitting ? 'Logging in...' : 'Log In'}
                         </button>
 
-                        <span className="mt-4 text-center text-sm">No account yet? <Link to="/register" className="hover:text-gray-500 hover:underline">Sign up here</Link></span>
+                        {systemSettings.registration_enabled &&
+                            <span className="mt-4 text-center text-sm">No account yet? <Link to="/register" className="hover:text-gray-500 hover:underline">Sign up here</Link></span>
+                        }
                     </fieldset>
                 </form>
             </div>

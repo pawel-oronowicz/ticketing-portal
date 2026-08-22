@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signup } from '../../api/auth'
 import { useNavigate } from 'react-router'
 import { useAuth } from "../../context/AuthContext.tsx";
+import { useSystemSettings } from "../../hooks/useSystemSettings.ts";
 
 const schema = z.object({
     name: z.string().nonempty('Name must not be empty'),
@@ -19,6 +20,7 @@ type FormData = z.infer<typeof schema>
 
 export default function RegisterPage() {
     const navigate = useNavigate()
+    const { data: systemSettings, isLoading: systemSettingsLoading } = useSystemSettings()
 
     const {
         register,
@@ -30,6 +32,8 @@ export default function RegisterPage() {
 
     const { setAuth } = useAuth()
 
+    if (systemSettingsLoading) return <p>Loading...</p>
+
     const onSubmit = async (data: FormData) => {
         const response = await signup(data)
         setAuth(response.user, response.token)
@@ -39,6 +43,7 @@ export default function RegisterPage() {
     return (
         <div>
             <div className="flex max-w-7xl mx-auto px-6 py-6 justify-center">
+                {systemSettings.registration_enabled ? (
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
                         <legend className="fieldset-legend">Register</legend>
@@ -84,6 +89,10 @@ export default function RegisterPage() {
                         </button>
                     </fieldset>
                 </form>
+                ) : (
+                    <p>Registration is currently disabled.</p>
+                    )
+                }
             </div>
         </div>
     )

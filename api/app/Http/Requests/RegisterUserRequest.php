@@ -11,9 +11,14 @@ class RegisterUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        if(!config('features.registration_enabled')) {
+            abort(403, 'Registration currently disabled.');
+        }
+
         if ($this->user()) {
             abort(403, 'Already authenticated.');
         }
+
         return true;
     }
 

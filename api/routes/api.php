@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginUserController;
 use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\EnumController;
+use App\Http\Controllers\SystemSettingsController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketUpdateController;
 use App\Http\Controllers\UserController;
@@ -12,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', RegisterUserController::class);
 Route::post('/login', LoginUserController::class);
+
+// System Settings
+Route::get('/system-settings', [SystemSettingsController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/');
