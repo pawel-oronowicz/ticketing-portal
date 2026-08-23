@@ -1,0 +1,10 @@
+# .dockerignore
+api/vendor
+api/node_modules
+api/.env
+api/.git
+api/storage/logs/*
+api/bootstrap/cache/*.php
+api/app/Providers/TelescopeServiceProvider.php
+frontend/node_modules
+frontend/dist
