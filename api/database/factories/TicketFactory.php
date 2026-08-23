@@ -47,37 +47,36 @@ class TicketFactory extends Factory
     }
 
     /**
-     * @return $this
+     * Attach ticket updates after creation. Omit $count for a random 1-5, pass 0 for none.
+     * @param int|null $count
+     * @return TicketFactory
      */
-    public function withUpdates(int $count): static
+    public function withUpdates(?int $count = null): static
     {
-        $clone = clone $this;
-        $clone->updateCount = $count;
-        return $clone;
+        return $this->afterCreating(function (Ticket $ticket) use ($count) {
+            $actualCount = $count ?? rand(1, 5);
+
+            if ($actualCount === 0) {
+                return;
+            }
+
+            TicketUpdate::factory()
+                ->count($actualCount)
+                ->for($ticket)
+                ->create([
+                    'is_internal' => false,
+                    'created_by_user_id' => $ticket->assigned_user_id !== null
+                        ? fake()->randomElement([$ticket->created_by_user_id, $ticket->assigned_user_id])
+                        : $ticket->created_by_user_id,
+                ]);
+        });
     }
 
     /**
      * @return $this
      */
-    public function configure(): static
+    public function withoutUpdates(): static
     {
-        return $this->afterCreating(function (Ticket $ticket) {
-            if ($this->updateCount === 0) {
-                return;
-            }
-
-            TicketUpdate::factory()
-                ->count($this->updateCount)
-                ->for($ticket)
-                ->create([
-                    'is_internal' => false,
-                    'created_by_user_id' => $ticket->assigned_user_id !== null ?
-                        fake()->randomElement([
-                            $ticket->created_by_user_id,
-                            $ticket->assigned_user_id
-                        ]) :
-                        $ticket->created_by_user_id,
-                ]);
-        });
+        return $this->withUpdates(0);
     }
 }

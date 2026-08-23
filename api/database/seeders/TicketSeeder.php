@@ -15,7 +15,7 @@ class TicketSeeder extends Seeder
     {
         Ticket::factory()
             ->count(1000)
-            ->withUpdates(rand(1, 5))
+            ->withUpdates()
             ->create();
     }
 }
