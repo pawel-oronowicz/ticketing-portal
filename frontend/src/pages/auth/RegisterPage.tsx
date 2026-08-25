@@ -48,7 +48,7 @@ export default function RegisterPage() {
                     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
                         <legend className="fieldset-legend">Register</legend>
 
-                        <label className="label">Name</label>
+                        <label className="label">Name<span className="text-red-600">*</span></label>
                         <input
                             {...register('name')}
                             type="text"
@@ -57,7 +57,7 @@ export default function RegisterPage() {
                         />
                         {errors.name && <p className="text-red-500">{errors.name.message}</p>}
 
-                        <label className="label mt-2">Email</label>
+                        <label className="label mt-2">Email<span className="text-red-600">*</span></label>
                         <input
                             {...register('email')}
                             type="email"
@@ -66,7 +66,7 @@ export default function RegisterPage() {
                         />
                         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
 
-                        <label className="label mt-2">Password</label>
+                        <label className="label mt-2">Password<span className="text-red-600">*</span></label>
                         <input
                             {...register('password')}
                             type="password"
@@ -75,7 +75,7 @@ export default function RegisterPage() {
                         />
                         {errors.password && <p className="text-red-500">{errors.password.message}</p>}
 
-                        <label className="label mt-2">Confirm Password</label>
+                        <label className="label mt-2">Confirm Password<span className="text-red-600">*</span></label>
                         <input
                             {...register('password_confirmation')}
                             type="password"
