@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\UserRole;
+use App\Events\TicketCreated;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Repositories\TicketRepository;
@@ -10,7 +11,10 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TicketService
 {
-    public function __construct(private TicketRepository $ticketRepository) {}
+    public function __construct(
+        private TicketRepository $ticketRepository,
+        private TicketUpdateService $ticketUpdateService,
+    ) {}
 
     private array $restrictedFields = ['priority', 'assigned_user_id'];
 
@@ -64,5 +68,27 @@ class TicketService
         }
 
         return $this->ticketRepository->update($id, $data);
+    }
+
+    /**
+     * @param array $data
+     * @param User $user
+     * @return Ticket
+     */
+    public function create(array $data, User $user): Ticket
+    {
+        $ticket = $this->ticketRepository->create($data, $user);
+        $ticketUpdateData = [
+            'ticket_id' => $ticket->id,
+            'text' => $data['description'],
+            'is_internal' => false,
+            'created_by_user_id' => auth()->id(),
+        ];
+
+        $this->ticketUpdateService->create($ticket, $ticketUpdateData, $user);
+
+        TicketCreated::dispatch($ticket);
+
+        return $ticket;
     }
 }

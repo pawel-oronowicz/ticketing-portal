@@ -35,7 +35,7 @@ class TicketUpdateController extends Controller
         abort_if(Gate::denies('view', $ticket), 404);
         abort_if(Gate::denies('create', TicketUpdate::class), 404);
 
-        $ticketUpdate = $this->ticketUpdateService->createTicketUpdate($ticket, $request->validated(), auth()->user());
+        $ticketUpdate = $this->ticketUpdateService->create($ticket, $request->validated(), auth()->user());
 
         return response()->json(TicketUpdateResource::make($ticketUpdate), 201);
     }

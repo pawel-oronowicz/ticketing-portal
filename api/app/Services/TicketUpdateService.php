@@ -33,7 +33,7 @@ class TicketUpdateService
      * @param User $user
      * @return TicketUpdate
      */
-    public function createTicketUpdate(Ticket $ticket, array $data, User $user): TicketUpdate
+    public function create(Ticket $ticket, array $data, User $user): TicketUpdate
     {
         $ticketUpdate = $this->ticketUpdateRepository->create($ticket, $data, $user);
 

@@ -3,11 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Enums\TicketPriority;
-use App\Enums\TicketStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateTicketRequest extends FormRequest
+class CreateTicketRequest extends FormRequest
 {
     // @codeCoverageIgnoreStart
 
@@ -17,17 +16,16 @@ class UpdateTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => [
-                'required',
-                'string',
-                Rule::in(TicketStatus::cases()),
-            ],
+            'subject' => 'required|string',
+            'description' => 'required|string',
+            'company_id' => 'required|integer|exists:companies,id',
+            'site_id' => 'required|integer|exists:sites,id',
+            'assigned_user_id' => 'nullable|integer|exists:users,id',
             'priority' => [
                 'required',
                 'string',
                 Rule::in(TicketPriority::cases()),
             ],
-            'assigned_user_id' => 'nullable|integer|exists:users,id'
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
 use App\Models\Ticket;
@@ -56,5 +57,18 @@ class TicketController extends Controller
         $ticket = $this->ticketService->update($id, $request->validated(), auth()->user());
 
         return response()->json(TicketResource::make($ticket));
+    }
+
+    /**
+     * @param CreateTicketRequest $request
+     * @return JsonResponse
+     */
+    public function store(CreateTicketRequest $request): JsonResponse
+    {
+        abort_if(Gate::denies('create', Ticket::class), 404);
+
+        $ticket = $this->ticketService->create($request->validated(), auth()->user());
+
+        return response()->json(TicketResource::make($ticket), 201);
     }
 }

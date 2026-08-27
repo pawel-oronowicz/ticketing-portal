@@ -25,7 +25,9 @@ class UserRepository
     public function findAll(?UserRole $role = null): Collection
     {
         if($role) {
-            return User::where('role', $role->value)->get();
+            return User::where('role', $role->value)
+                ->orderBy('name')
+                ->get();
         }
 
         return User::all();

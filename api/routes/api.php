@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginUserController;
 use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\EnumController;
+use App\Http\Controllers\SiteController;
 use App\Http\Controllers\SystemSettingsController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketUpdateController;
@@ -28,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Companies
     Route::get('/companies', [CompanyController::class, 'index']);
+
+    // Sites
+    Route::get('/companies/{company}/sites', [SiteController::class, 'findAllByCompany']);
 
     // Tickets
     Route::apiResource('/tickets', TicketController::class);

@@ -8,6 +8,7 @@ import LoginPage from './pages/auth/LoginPage'
 import Layout from './components/ui/Layout.tsx'
 import DashboardPage from "./pages/DashboardPage.tsx";
 import CompanyIndexPage from "./pages/CompanyIndexPage.tsx";
+import TicketCreatePage from "./pages/TicketCreatePage.tsx";
 import TicketIndexPage from "./pages/TicketIndexPage.tsx";
 import TicketViewPage from "./pages/TicketViewPage.tsx";
 
@@ -41,6 +42,7 @@ export default function App() {
                     <Route path="/" element={<DashboardPage />} />
                     <Route path="/companies" element={<CompanyIndexPage />} />
                     <Route path="/tickets" element={<TicketIndexPage />} />
+                    <Route path="/tickets/create" element={<TicketCreatePage />} />
                     <Route path="/tickets/:id" element={<TicketViewPage />} />
                 </Route>
             </Routes>

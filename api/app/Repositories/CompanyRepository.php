@@ -12,6 +12,6 @@ class CompanyRepository
      */
     public function findAll(): Collection
     {
-        return Company::all();
+        return Company::orderBy('name')->get();
     }
 }

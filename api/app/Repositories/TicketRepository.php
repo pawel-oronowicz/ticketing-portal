@@ -2,8 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Enums\TicketStatus;
 use App\Models\Company;
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
 class TicketRepository
@@ -46,6 +48,22 @@ class TicketRepository
         $ticket = $this->findById($id);
 
         $ticket->update($data);
+
+        return $ticket;
+    }
+
+    /**
+     * @param array $data
+     * @param User $user
+     * @return Ticket
+     */
+    public function create(array $data, User $user): Ticket
+    {
+        $ticket = new Ticket();
+        $ticket->fill($data);
+        $ticket->created_by_user_id = $user->id;
+        $ticket->status = TicketStatus::New;
+        $ticket->save();
 
         return $ticket;
     }
