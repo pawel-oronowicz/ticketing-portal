@@ -6,7 +6,7 @@ use App\Models\Ticket;
 use App\Models\User;
 
 test('unauthenticated user cannot view ticket updates', function () {
-    Company::factory()->create();
+    Company::factory()->withSites()->create();
     User::factory()->create(['role' => UserRole::Engineer]);
     $ticket = Ticket::factory()->create();
     $response = $this->getJson("/api/tickets/{$ticket->id}/updates");
@@ -15,7 +15,7 @@ test('unauthenticated user cannot view ticket updates', function () {
 });
 
 test('engineer and admin user can view all ticket updates', function () {
-    Company::factory()->create();
+    Company::factory()->withSites()->create();
 
     $engineer = User::factory()->create(['role' => UserRole::Engineer]);
     $ticket = Ticket::factory()->create();
@@ -32,7 +32,7 @@ test('engineer and admin user can view all ticket updates', function () {
 });
 
 test('customer user can view ticket updates belonging to their company tickets', function () {
-    $company = Company::factory()->create();
+    $company = Company::factory()->withSites()->create();
 
     User::factory()->create(['role' => UserRole::Engineer]);
 
@@ -45,8 +45,8 @@ test('customer user can view ticket updates belonging to their company tickets',
 });
 
 test('customer user cannot view ticket updates belonging to other company tickets', function () {
-    $company1 = Company::factory()->create();
-    $company2 = Company::factory()->create();
+    $company1 = Company::factory()->withSites()->create();
+    $company2 = Company::factory()->withSites()->create();
 
     User::factory()->create(['role' => UserRole::Engineer]);
 
@@ -58,7 +58,7 @@ test('customer user cannot view ticket updates belonging to other company ticket
 });
 
 test('engineer and admin user can create ticket updates on any ticket', function () {
-    Company::factory()->create();
+    Company::factory()->withSites()->create();
 
     $engineer = User::factory()->create(['role' => UserRole::Engineer]);
     $ticket = Ticket::factory()->create();
@@ -77,7 +77,7 @@ test('engineer and admin user can create ticket updates on any ticket', function
 });
 
 test('customer user can create ticket updates on tickets belonging to their company', function () {
-    $company = Company::factory()->create();
+    $company = Company::factory()->withSites()->create();
     User::factory()->create(['role' => UserRole::Engineer]);
 
     $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
@@ -90,8 +90,8 @@ test('customer user can create ticket updates on tickets belonging to their comp
 });
 
 test('customer user cannot create ticket updates on tickets belonging to another company', function () {
-    $company1 = Company::factory()->create();
-    $company2 = Company::factory()->create();
+    $company1 = Company::factory()->withSites()->create();
+    $company2 = Company::factory()->withSites()->create();
     User::factory()->create(['role' => UserRole::Engineer]);
 
     $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company1->id]);

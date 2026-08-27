@@ -15,6 +15,7 @@ class CompanySeeder extends Seeder
     {
         Company::factory()
             ->count(50)
+            ->withSites()
             ->create();
     }
 }

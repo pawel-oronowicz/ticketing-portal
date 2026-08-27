@@ -3,16 +3,21 @@
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
 use App\Enums\UserRole;
+use App\Events\TicketCreated;
 use App\Models\Company;
 use App\Models\Site;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Repositories\TicketRepository;
+use App\Repositories\TicketUpdateRepository;
 use App\Services\TicketService;
+use App\Services\TicketUpdateService;
 
 test('finds all tickets', function () {
-    $repository = new TicketRepository();
-    $service = new TicketService($repository);
+    $ticketRepository = new TicketRepository();
+    $ticketUpdateRepository = new TicketUpdateRepository();
+    $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
+    $service = new TicketService($ticketRepository, $ticketUpdateService);
 
     $tickets = $service->findAll();
     expect($tickets)->toHaveCount(0);
@@ -27,8 +32,10 @@ test('finds all tickets', function () {
 });
 
 test('finds ticket by ID', function () {
-    $repository = new TicketRepository();
-    $service = new TicketService($repository);
+    $ticketRepository = new TicketRepository();
+    $ticketUpdateRepository = new TicketUpdateRepository();
+    $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
+    $service = new TicketService($ticketRepository, $ticketUpdateService);
 
     $company = Company::factory()->create();
     Site::factory()->create();
@@ -44,11 +51,12 @@ test('finds ticket by ID', function () {
 });
 
 test('finds tickets for user', function () {
-    $repository = new TicketRepository();
-    $service = new TicketService($repository);
+    $ticketRepository = new TicketRepository();
+    $ticketUpdateRepository = new TicketUpdateRepository();
+    $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
+    $service = new TicketService($ticketRepository, $ticketUpdateService);
 
-    $company1 = Company::factory()->create();
-    Site::factory()->create();
+    $company1 = Company::factory()->withSites()->create();
     $engineer = User::factory()->create(['role' => UserRole::Engineer]);
     $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company1->id]);
     Ticket::factory()->count(3)->create(['company_id' => $company1->id]);
@@ -58,7 +66,7 @@ test('finds tickets for user', function () {
     $tickets = $service->findForUser($customer);
     expect($tickets)->toHaveCount(3);
 
-    $company2 = Company::factory()->create();
+    $company2 = Company::factory()->withSites()->create();
     Ticket::factory()->count(2)->create(['company_id' => $company2->id]);
     $tickets = $service->findForUser($engineer);
     expect($tickets)->toHaveCount(5);
@@ -67,8 +75,10 @@ test('finds tickets for user', function () {
 });
 
 test('findsForUser returns empty collection if user has no company', function () {
-    $repository = new TicketRepository();
-    $service = new TicketService($repository);
+    $ticketRepository = new TicketRepository();
+    $ticketUpdateRepository = new TicketUpdateRepository();
+    $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
+    $service = new TicketService($ticketRepository, $ticketUpdateService);
 
     $company = Company::factory()->create();
     Site::factory()->create();
@@ -92,8 +102,10 @@ test('engineer updates ticket with data restricted to internal users', function 
         'assigned_user_id' => null
     ]);
 
-    $repository = new TicketRepository();
-    $service = new TicketService($repository);
+    $ticketRepository = new TicketRepository();
+    $ticketUpdateRepository = new TicketUpdateRepository();
+    $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
+    $service = new TicketService($ticketRepository, $ticketUpdateService);
 
     $data = [
         'status' => TicketStatus::InProgress,
@@ -118,8 +130,10 @@ test('customer cannot update ticket with data restricted to internal users', fun
         'assigned_user_id' => null
     ]);
 
-    $repository = new TicketRepository();
-    $service = new TicketService($repository);
+    $ticketRepository = new TicketRepository();
+    $ticketUpdateRepository = new TicketUpdateRepository();
+    $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
+    $service = new TicketService($ticketRepository, $ticketUpdateService);
 
     $data = [
         'status' => TicketStatus::InProgress,
@@ -130,4 +144,53 @@ test('customer cannot update ticket with data restricted to internal users', fun
     expect($ticket->status)->toBe(TicketStatus::InProgress)
         ->and($ticket->priority)->toBe(TicketPriority::Low)
         ->and($ticket->assigned_user_id)->toBe($engineer->null);
+});
+
+test('creating a ticket persists it to the database', function () {
+    $company = Company::factory()->create();
+    $site = Site::factory()->create();
+    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
+
+    $response = $this->actingAs($engineer)->postJson("/api/tickets", [
+        'subject' => 'Test subject',
+        'description' => 'Test description',
+        'company_id' => $company->id,
+        'site_id' => $site->id,
+        'priority' => TicketPriority::Low,
+        'assigned_user_id' => $engineer->id,
+    ]);
+
+    $response->assertStatus(201);
+
+    $this->assertDatabaseHas('tickets', [
+        'subject' => 'Test subject',
+        'company_id' => $company->id,
+        'site_id' => $site->id,
+        'priority' => TicketPriority::Low,
+        'assigned_user_id' => $engineer->id,
+        'created_by_user_id' => $engineer->id,
+    ]);
+});
+
+test('creating a ticket dispatches TicketUpdateCreated event', function () {
+    Event::fake();
+
+    $company = Company::factory()->create();
+    $site = Site::factory()->create();
+    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
+
+    $response = $this->actingAs($engineer)->postJson("/api/tickets", [
+        'subject' => 'Test subject',
+        'description' => 'Test description',
+        'company_id' => $company->id,
+        'site_id' => $site->id,
+        'priority' => TicketPriority::Low,
+        'assigned_user_id' => $engineer->id,
+    ]);
+
+    $response->assertStatus(201);
+
+    Event::assertDispatched(TicketCreated::class, function ($event) use ($response) {
+        return $event->ticket->id === $response->json('id');
+    });
 });

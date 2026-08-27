@@ -24,13 +24,21 @@ class CompanyFactory extends Factory
     }
 
     /**
-     * @return $this
+     * Attach sites after creation. Omit $count for a random 1-5, pass 0 for none.
+     * @param int|null $count
+     * @return CompanyFactory
      */
-    public function configure(): static
+    public function withSites(?int $count = null): static
     {
-        return $this->afterCreating(function (Company $company) {
+        return $this->afterCreating(function (Company $company) use ($count) {
+            $actualCount = $count ?? rand(1, 5);
+
+            if ($actualCount === 0) {
+                return;
+            }
+
             Site::factory()
-                ->count(rand(1, 5))
+                ->count($actualCount)
                 ->for($company)
                 ->create();
         });

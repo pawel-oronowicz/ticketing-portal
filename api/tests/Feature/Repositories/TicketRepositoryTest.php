@@ -40,7 +40,7 @@ test('finds ticket by ID', function () {
 test('finds tickets by company', function () {
     $repository = new TicketRepository();
 
-    $company = Company::factory()->create();
+    $company = Company::factory()->withSites()->create();
     Site::factory()->create();
     User::factory()->create(['role' => UserRole::Engineer]);
     User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
@@ -49,7 +49,7 @@ test('finds tickets by company', function () {
     $tickets = $repository->findAllByCompany($company);
     expect($tickets)->toHaveCount(3);
 
-    $company2 = Company::factory()->create();
+    $company2 = Company::factory()->withSites()->create();
     Site::factory()->create();
     Ticket::factory()->count(2)->create(['company_id' => $company2->id]);
 
@@ -80,4 +80,32 @@ test('user updates ticket with data restricted to internal users', function () {
     expect($ticket->status)->toBe(TicketStatus::InProgress)
         ->and($ticket->priority)->toBe(TicketPriority::High)
         ->and($ticket->assigned_user_id)->toBe($engineer->id);
+});
+
+test('creates a ticket', function () {
+    $repository = new TicketRepository();
+
+    $company = Company::factory()->create();
+    $site = Site::factory()->create();
+    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
+    $user = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
+
+    $data = [
+        'subject' => 'Test subject',
+        'description' => 'Test description',
+        'company_id' => $company->id,
+        'site_id' => $site->id,
+        'priority' => TicketPriority::Low,
+        'assigned_user_id' => $engineer->id,
+    ];
+    $repository->create($data, $user);
+
+    $this->assertDatabaseHas('tickets', [
+        'subject' => 'Test subject',
+        'company_id' => $company->id,
+        'site_id' => $site->id,
+        'priority' => TicketPriority::Low,
+        'assigned_user_id' => $engineer->id,
+        'created_by_user_id' => $user->id,
+    ]);
 });

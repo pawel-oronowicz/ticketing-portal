@@ -14,7 +14,7 @@ test('unauthenticated user cannot view tickets', function () {
 });
 
 test('engineer and admin can view all tickets', function () {
-    Company::factory()->create();
+    Company::factory()->withSites()->create();
     $engineer = User::factory()->create(['role' => UserRole::Engineer]);
 
     Ticket::factory()->count(3)->create();
@@ -30,8 +30,8 @@ test('engineer and admin can view all tickets', function () {
 });
 
 test('customer can only view tickets belonging to their company', function () {
-    $company1 = Company::factory()->create();
-    $company2 = Company::factory()->create();
+    $company1 = Company::factory()->withSites()->create();
+    $company2 = Company::factory()->withSites()->create();
     $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company1->id]);
     User::factory()->create(['role' => UserRole::Engineer]);
 
@@ -44,7 +44,7 @@ test('customer can only view tickets belonging to their company', function () {
 });
 
 test('engineer and admin can view any single ticket', function () {
-    Company::factory()->create();
+    Company::factory()->withSites()->create();
     $engineer = User::factory()->create(['role' => UserRole::Engineer]);
 
     $ticket = Ticket::factory()->create();
@@ -70,7 +70,7 @@ test('engineer and admin can view any single ticket', function () {
 });
 
 test('customer can view a ticket belonging to their company', function () {
-    $company = Company::factory()->create();
+    $company = Company::factory()->withSites()->create();
     $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
     User::factory()->create(['role' => UserRole::Engineer]);
 
@@ -87,8 +87,8 @@ test('customer can view a ticket belonging to their company', function () {
 });
 
 test('customer cannot view a ticket belonging to another company', function () {
-    $company1 = Company::factory()->create();
-    $company2 = Company::factory()->create();
+    $company1 = Company::factory()->withSites()->create();
+    $company2 = Company::factory()->withSites()->create();
     $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company1->id]);
     User::factory()->create(['role' => UserRole::Engineer]);
 
@@ -100,7 +100,7 @@ test('customer cannot view a ticket belonging to another company', function () {
 
 test('engineer and admin can update ticket status and priority', function () {
     $engineer = User::factory()->create(['role' => UserRole::Engineer]);
-    Company::factory()->create();
+    Company::factory()->withSites()->create();
     $ticket = Ticket::factory()->create(['status' => TicketStatus::New]);
 
     $response = $this->actingAs($engineer)->putJson("/api/tickets/{$ticket->id}", [
@@ -117,7 +117,7 @@ test('engineer and admin can update ticket status and priority', function () {
 });
 
 test('customer can update ticket status but not priority', function () {
-    $company = Company::factory()->create();
+    $company = Company::factory()->withSites()->create();
     $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
     User::factory()->create(['role' => UserRole::Engineer]);
     $ticket = Ticket::factory()->create([
