@@ -2,18 +2,19 @@
 
 namespace App\Repositories;
 
+use App\Models\Company;
 use App\Models\Site;
 use Illuminate\Database\Eloquent\Collection;
 
 class SiteRepository
 {
     /**
-     * @param int $companyId
+     * @param Company $company
      * @return Collection
      */
-    public function findAllByCompany(int $companyId): Collection
+    public function findAllByCompany(Company $company): Collection
     {
-        return Site::where('company_id', $companyId)
+        return Site::where('company_id', $company->id)
             ->orderBy('name')
             ->get();
     }

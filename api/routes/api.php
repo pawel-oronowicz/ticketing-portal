@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/companies', [CompanyController::class, 'index']);
 
     // Sites
-    Route::get('/companies/{company}/sites', [SiteController::class, 'findAllByCompany']);
+    Route::get('/companies/{company}/sites', [SiteController::class, 'index']);
 
     // Tickets
     Route::apiResource('/tickets', TicketController::class);
