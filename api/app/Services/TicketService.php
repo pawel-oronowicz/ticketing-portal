@@ -85,9 +85,9 @@ class TicketService
             'created_by_user_id' => auth()->id(),
         ];
 
-        $this->ticketUpdateService->create($ticket, $ticketUpdateData, $user);
-
         TicketCreated::dispatch($ticket);
+
+        $this->ticketUpdateService->create($ticket, $ticketUpdateData, $user);
 
         return $ticket;
     }
