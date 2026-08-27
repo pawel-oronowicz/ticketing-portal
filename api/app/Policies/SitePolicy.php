@@ -13,11 +13,7 @@ class SitePolicy
      */
     public function viewAny(User $user): bool
     {
-        if(in_array($user->role, [UserRole::Admin, UserRole::Engineer])) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
