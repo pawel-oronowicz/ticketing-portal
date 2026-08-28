@@ -94,3 +94,7 @@ test('logged in user cannot access register route', function () {
 
     $response->assertStatus(403);
 });
+
+test('it does nothing - test', function () {
+
+});
