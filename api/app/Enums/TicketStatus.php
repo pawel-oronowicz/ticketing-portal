@@ -10,6 +10,7 @@ enum TicketStatus: string
     case Resolved = 'resolved';
     case Closed = 'closed';
     case Cancelled = 'cancelled';
+    case Reopened = 'reopened';
 
     /**
      * @return string
@@ -23,6 +24,7 @@ enum TicketStatus: string
             self::Resolved => 'Resolved',
             self::Closed => 'Closed',
             self::Cancelled => 'Cancelled',
+            self::Reopened => 'Reopened',
         };
     }
 
