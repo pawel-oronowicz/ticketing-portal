@@ -37,4 +37,4 @@ jobs:
 
       - name: Run tests
         working-directory: ./api
-        run: vendor/bin/pest --stop-on-warning
+        run: vendor/bin/pest --fail-on-warning --fail-on-risky
