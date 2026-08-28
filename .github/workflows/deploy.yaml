@@ -4,6 +4,10 @@ on:
   push:
     branches: [master]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   test-backend:
     runs-on: ubuntu-latest
@@ -38,3 +42,50 @@ jobs:
       - name: Run tests
         working-directory: ./api
         run: vendor/bin/pest --fail-on-warning --fail-on-risky
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    needs: test-backend
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v6
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: GitHubActions
+          aws-region: eu-north-1
+
+      - name: Login to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image
+        run: |
+          docker build -t ${{ steps.ecr-login.outputs.registry }}/ticketing-portal-api:latest -f docker/php/Dockerfile .
+          docker push ${{ steps.ecr-login.outputs.registry }}/ticketing-portal-api:latest
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin ${{ steps.ecr-login.outputs.registry }}
+            docker pull ${{ steps.ecr-login.outputs.registry }}/ticketing-portal-api:latest
+            docker stop php
+            docker rm php
+            docker run -d --name php --network ticketing-network \
+              -e APP_ENV=production \
+              -e DB_CONNECTION=pgsql \
+              -e DB_HOST=ticketingportal-test.c3owge8yes6v.eu-north-1.rds.amazonaws.com \
+              -e DB_PORT=5432 \
+              -e DB_DATABASE=ticketing \
+              -e DB_USERNAME=postgres \
+              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e APP_KEY=${{ secrets.APP_KEY }} \
+              -e REGISTRATION_ENABLED=false \
+              -e DEMO_MODE=true \
+              ${{ steps.ecr-login.outputs.registry }}/ticketing-portal-api:latest
+            docker restart nginx
