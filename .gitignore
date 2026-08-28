@@ -17,5 +17,5 @@ deploy-backend.ps1
 deploy-frontend.ps1
 
 # Storage
-storage/logs/*
-storage/framework/testing
+api/storage/logs/*
+api/storage/framework/testing
