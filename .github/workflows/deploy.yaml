@@ -27,6 +27,7 @@ jobs:
           mkdir -p storage/framework/{sessions,views,cache,testing}
           mkdir -p storage/logs
           mkdir -p bootstrap/cache
+          mkdir -p tests/.pest/snapshots
 
       - name: Run tests
         working-directory: ./api
