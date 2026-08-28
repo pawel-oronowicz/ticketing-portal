@@ -18,4 +18,16 @@ deploy-frontend.ps1
 
 # Storage
 api/storage/logs/*
-api/storage/framework/testing
+!api/storage/logs/.gitkeep
+
+api/storage/framework/testing/*
+!api/storage/framework/testing/.gitkeep
+
+api/storage/framework/cache/*
+!api/storage/framework/cache/.gitkeep
+
+api/storage/framework/sessions/*
+!api/storage/framework/sessions/.gitkeep
+
+api/storage/framework/views/*
+!api/storage/framework/views/.gitkeep
