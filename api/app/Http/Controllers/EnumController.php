@@ -2,26 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\TicketPriority;
-use App\Enums\TicketStatus;
+use App\Services\EnumService;
 use Illuminate\Http\JsonResponse;
 
-class EnumController
+class EnumController extends Controller
 {
-    /**
-     * @return JsonResponse
-     */
+    public function __construct(private readonly EnumService $enumService) {}
+
     public function index(): JsonResponse
     {
-        return response()->json([
-            'ticket_statuses' => array_map(fn($case) => [
-                'value' => $case->value,
-                'label' => $case->label(),
-            ], TicketStatus::cases()),
-            'ticket_priorities' => array_map(fn($case) => [
-                'value' => $case->value,
-                'label' => $case->label(),
-            ], TicketPriority::cases()),
-        ]);
+        return response()->json($this->enumService->getAll());
     }
 }
