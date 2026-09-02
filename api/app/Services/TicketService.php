@@ -7,13 +7,14 @@ use App\Events\TicketCreated;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Repositories\TicketRepository;
+use Cache;
 use Illuminate\Database\Eloquent\Collection;
 
 class TicketService
 {
     public function __construct(
-        private TicketRepository $ticketRepository,
-        private TicketUpdateService $ticketUpdateService,
+        private readonly TicketRepository    $ticketRepository,
+        private readonly TicketUpdateService $ticketUpdateService,
     ) {}
 
     private array $restrictedFields = ['priority', 'assigned_user_id'];
@@ -23,7 +24,9 @@ class TicketService
      */
     public function findAll(): Collection
     {
-        return $this->ticketRepository->findAll();
+        return Cache::tags(['tickets'])->remember('tickets:all', now()->addMinutes(5), function () {
+            return $this->ticketRepository->findAll();
+        });
     }
 
     /**
@@ -42,15 +45,21 @@ class TicketService
     public function findForUser(User $user): Collection
     {
         if($user->role->isInternal()) {
-            $tickets = $this->ticketRepository->findAll();
+            return Cache::tags(['tickets'])->remember('tickets:all', now()->addMinutes(5), function () {
+                return $this->ticketRepository->findAll();
+            });
         } else {
             if(!$user->company) {
                 return new Collection();
             }
-            $tickets = $this->ticketRepository->findAllByCompany($user->company);
+            return Cache::tags(['tickets', "tickets:company:{$user->company_id}"])->remember(
+                "tickets:company:{$user->company_id}",
+                now()->addMinutes(5),
+                function () use ($user) {
+                    return $this->ticketRepository->findAllByCompany($user->company);
+                }
+            );
         }
-
-        return $tickets;
     }
 
     /**

@@ -16,6 +16,9 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
   ->use(RefreshDatabase::class)
+    ->beforeEach(function () {
+        Cache::flush();
+    })
     ->in('Feature');
 
 pest()->extend(TestCase::class)
