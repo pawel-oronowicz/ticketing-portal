@@ -85,6 +85,11 @@ jobs:
               -e DB_USERNAME=postgres \
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               -e APP_KEY=${{ secrets.APP_KEY }} \
+              -e CACHE_STORE=redis \
+              -e REDIS_CLIENT=phpredis \
+              -e REDIS_HOST=redis \
+              -e REDIS_PASSWORD=null \
+              -e REDIS_PORT=6379 \
               -e REGISTRATION_ENABLED=false \
               -e DEMO_MODE=true \
               ${{ steps.ecr-login.outputs.registry }}/ticketing-portal-api:latest
