@@ -31,6 +31,44 @@ test('finds all tickets', function () {
     expect($tickets)->toHaveCount(3);
 });
 
+test('findAll caches ticket list', function () {
+    $ticketRepository = new TicketRepository();
+    $ticketUpdateRepository = new TicketUpdateRepository();
+    $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
+    $service = new TicketService($ticketRepository, $ticketUpdateService);
+
+    $company = Company::factory()->create();
+    Site::factory()->create();
+    User::factory()->create(['role' => UserRole::Engineer]);
+    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
+    Ticket::factory()->count(3)->create(['company_id' => $company->id]);
+
+    $service->findAll();
+
+    expect(Cache::tags(['tickets'])->has('tickets:all'))->toBeTrue();
+});
+
+test('findAll does not query the database on cache hit', function () {
+    $ticketRepository = new TicketRepository();
+    $ticketUpdateRepository = new TicketUpdateRepository();
+    $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
+    $service = new TicketService($ticketRepository, $ticketUpdateService);
+
+    $company = Company::factory()->create();
+    Site::factory()->create();
+    User::factory()->create(['role' => UserRole::Engineer]);
+    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
+    Ticket::factory()->count(3)->create(['company_id' => $company->id]);
+
+    $service->findAll(); // populates cache
+
+    DB::enableQueryLog();
+    $service->findAll(); // should hit cache, not DB
+    $queries = DB::getQueryLog();
+
+    expect($queries)->toBeEmpty();
+});
+
 test('finds ticket by ID', function () {
     $ticketRepository = new TicketRepository();
     $ticketUpdateRepository = new TicketUpdateRepository();
@@ -74,7 +112,7 @@ test('finds tickets for user', function () {
     expect($tickets)->toHaveCount(3);
 });
 
-test('findsForUser returns empty collection if user has no company', function () {
+test('findForUser returns empty collection if user has no company', function () {
     $ticketRepository = new TicketRepository();
     $ticketUpdateRepository = new TicketUpdateRepository();
     $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
@@ -88,6 +126,30 @@ test('findsForUser returns empty collection if user has no company', function ()
     Ticket::factory()->count(3)->create(['company_id' => $company->id]);
     $tickets = $service->findForUser($customer);
     expect($tickets)->toHaveCount(0);
+});
+
+test('findForUser creates separate cached ticket lists for different customers', function () {
+    $ticketRepository = new TicketRepository();
+    $ticketUpdateRepository = new TicketUpdateRepository();
+    $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
+    $service = new TicketService($ticketRepository, $ticketUpdateService);
+
+    $company1 = Company::factory()->withSites()->create();
+    $company2 = Company::factory()->withSites()->create();
+
+    $customer1 = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company1->id]);
+    $customer2 = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company2->id]);
+
+    User::factory()->create(['role' => UserRole::Engineer]);
+
+    Ticket::factory()->create(['company_id' => $company1->id]);
+    Ticket::factory()->count(2)->create(['company_id' => $company2->id]);
+
+    $result1 = $service->findForUser($customer1);
+    $result2 = $service->findForUser($customer2);
+
+    expect($result1)->toHaveCount(1)
+        ->and($result2)->toHaveCount(2);
 });
 
 test('engineer updates ticket with data restricted to internal users', function () {
@@ -193,4 +255,23 @@ test('creating a ticket dispatches TicketUpdateCreated event', function () {
     Event::assertDispatched(TicketCreated::class, function ($event) use ($response) {
         return $event->ticket->id === $response->json('id');
     });
+});
+
+test('creating a ticket invalidates the tickets cache', function () {
+    $ticketRepository = new TicketRepository();
+    $ticketUpdateRepository = new TicketUpdateRepository();
+    $ticketUpdateService = new TicketUpdateService($ticketUpdateRepository);
+    $service = new TicketService($ticketRepository, $ticketUpdateService);
+
+    $service->findAll(); // populates cache
+
+    expect(Cache::tags(['tickets'])->has('tickets:all'))->toBeTrue();
+
+    $company = Company::factory()->create();
+    Site::factory()->create();
+    User::factory()->create(['role' => UserRole::Engineer]);
+    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
+    Ticket::factory()->create(['company_id' => $company->id]);
+
+    expect(Cache::tags(['tickets'])->has('tickets:all'))->toBeFalse();
 });
