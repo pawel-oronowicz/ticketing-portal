@@ -10,36 +10,32 @@ use App\Models\User;
 use App\Repositories\TicketUpdateRepository;
 use App\Services\TicketUpdateService;
 
-test('finds all updates for ticket for internal user', function () {
-    $repository = new TicketUpdateRepository();
-    $service = new TicketUpdateService($repository);
+beforeEach(function () {
+    $this->repository = new TicketUpdateRepository();
+    $this->service = new TicketUpdateService($this->repository);
+    $this->company = Company::factory()->create();
+    $this->site = Site::factory()->create();
+    $this->engineer = User::factory()->create(['role' => UserRole::Engineer]);
+});
 
-    $company = Company::factory()->create();
-    Site::factory()->create();
-    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
-    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
-    $ticket = Ticket::factory()->create(['company_id' => $company->id]);
+test('finds all updates for ticket for internal user', function () {
+    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $this->company->id]);
+    $ticket = Ticket::factory()->create(['company_id' => $this->company->id]);
     TicketUpdate::factory()->count(2)->create([
         'ticket_id' => $ticket->id,
-        'created_by_user_id' => $engineer->id,
+        'created_by_user_id' => $this->engineer->id,
     ]);
 
-    $ticketUpdates = $service->findAllByTicket($ticket, $engineer);
+    $ticketUpdates = $this->service->findAllByTicket($ticket, $this->engineer);
     expect($ticketUpdates)->count()->toBe(2);
 });
 
 test('finds non-internal updates for ticket for customer user', function () {
-    $repository = new TicketUpdateRepository();
-    $service = new TicketUpdateService($repository);
-
-    $company = Company::factory()->create();
-    Site::factory()->create();
-    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
-    $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
-    $ticket = Ticket::factory()->create(['company_id' => $company->id]);
+    $customer = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $this->company->id]);
+    $ticket = Ticket::factory()->create(['company_id' => $this->company->id]);
     TicketUpdate::factory()->count(2)->create([
         'ticket_id' => $ticket->id,
-        'created_by_user_id' => $engineer->id,
+        'created_by_user_id' => $this->engineer->id,
         'is_internal' => false
     ]);
     TicketUpdate::factory()->create([
@@ -48,19 +44,16 @@ test('finds non-internal updates for ticket for customer user', function () {
         'is_internal' => true
     ]);
 
-    $ticketUpdates = $service->findAllByTicket($ticket, $customer);
+    $ticketUpdates = $this->service->findAllByTicket($ticket, $customer);
     expect($ticketUpdates)->count()->toBe(2);
 });
 
 test('creating a ticket update via API dispatches TicketUpdateCreated event', function () {
     Event::fake();
 
-    Company::factory()->create();
-    Site::factory()->create();
-    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
     $ticket = Ticket::factory()->create();
 
-    $response = $this->actingAs($engineer)->postJson("/api/tickets/{$ticket->id}/updates", [
+    $response = $this->actingAs($this->engineer)->postJson("/api/tickets/{$ticket->id}/updates", [
         'text' => 'Test update',
     ]);
 
@@ -72,12 +65,9 @@ test('creating a ticket update via API dispatches TicketUpdateCreated event', fu
 });
 
 test('creating a ticket update via API persists it to the database', function () {
-    Company::factory()->create();
-    Site::factory()->create();
-    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
     $ticket = Ticket::factory()->create();
 
-    $response = $this->actingAs($engineer)->postJson("/api/tickets/{$ticket->id}/updates", [
+    $response = $this->actingAs($this->engineer)->postJson("/api/tickets/{$ticket->id}/updates", [
         'text' => 'Test update',
     ]);
 

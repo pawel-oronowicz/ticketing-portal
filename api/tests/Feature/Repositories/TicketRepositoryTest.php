@@ -10,12 +10,16 @@ use App\Models\Ticket;
 use App\Repositories\TicketRepository;
 use function PHPUnit\Framework\assertNull;
 
+beforeEach(function () {
+    $this->repository = new TicketRepository();
+    $this->company = Company::factory()->create();
+    $this->site = Site::factory()->create();
+    $this->engineer = User::factory()->create(['role' => UserRole::Engineer]);
+    $this->user = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $this->company->id]);
+});
+
 test('finds all tickets', function () {
-    $company = Company::factory()->create();
-    Site::factory()->create();
-    User::factory()->create(['role' => UserRole::Engineer]);
-    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
-    Ticket::factory()->count(3)->create(['company_id' => $company->id]);
+    Ticket::factory()->count(3)->create(['company_id' => $this->company->id]);
 
     $repository = new TicketRepository();
     $tickets = $repository->findAll();
@@ -23,47 +27,32 @@ test('finds all tickets', function () {
 });
 
 test('finds ticket by ID', function () {
-    $company = Company::factory()->create();
-    Site::factory()->create();
-    User::factory()->create(['role' => UserRole::Engineer]);
-    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
-    Ticket::factory()->count(3)->create(['company_id' => $company->id]);
+    $ticket = Ticket::factory()->create(['company_id' => $this->company->id]);
 
-    $repository = new TicketRepository();
-    $ticket = $repository->findById(1);
-    $this->assertEquals(1, $ticket->id);
+    $result = $this->repository->findById($ticket->id);
+    $this->assertEquals($result->id, $ticket->id);
 
-    $ticket = $repository->findById(4);
-    $this->assertNull($ticket);
+    $result = $this->repository->findById($ticket->id + 1);
+    $this->assertNull($result);
 });
 
 test('finds tickets by company', function () {
-    $repository = new TicketRepository();
+    Ticket::factory()->count(3)->create(['company_id' => $this->company->id]);
 
-    $company = Company::factory()->withSites()->create();
-    Site::factory()->create();
-    User::factory()->create(['role' => UserRole::Engineer]);
-    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
-    Ticket::factory()->count(3)->create(['company_id' => $company->id]);
-
-    $tickets = $repository->findAllByCompany($company);
+    $tickets = $this->repository->findAllByCompany($this->company);
     expect($tickets)->toHaveCount(3);
 
     $company2 = Company::factory()->withSites()->create();
     Site::factory()->create();
     Ticket::factory()->count(2)->create(['company_id' => $company2->id]);
 
-    $tickets = $repository->findAllByCompany($company2);
+    $tickets = $this->repository->findAllByCompany($company2);
     expect($tickets)->toHaveCount(2);
 });
 
 test('user updates ticket with data restricted to internal users', function () {
-    $company = Company::factory()->create();
-    Site::factory()->create();
-    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
-    User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
     $ticket = Ticket::factory()->create([
-        'created_by_user_id' => $engineer->id,
+        'created_by_user_id' => $this->engineer->id,
         'status' => TicketStatus::New,
         'priority' => TicketPriority::Low,
         'assigned_user_id' => null
@@ -74,38 +63,31 @@ test('user updates ticket with data restricted to internal users', function () {
     $data = [
         'status' => TicketStatus::InProgress,
         'priority' => TicketPriority::High,
-        'assigned_user_id' => $engineer->id,
+        'assigned_user_id' => $this->engineer->id,
     ];
     $ticket = $repository->update($ticket->id, $data);
     expect($ticket->status)->toBe(TicketStatus::InProgress)
         ->and($ticket->priority)->toBe(TicketPriority::High)
-        ->and($ticket->assigned_user_id)->toBe($engineer->id);
+        ->and($ticket->assigned_user_id)->toBe($this->engineer->id);
 });
 
 test('creates a ticket', function () {
-    $repository = new TicketRepository();
-
-    $company = Company::factory()->create();
-    $site = Site::factory()->create();
-    $engineer = User::factory()->create(['role' => UserRole::Engineer]);
-    $user = User::factory()->create(['role' => UserRole::Customer, 'company_id' => $company->id]);
-
     $data = [
         'subject' => 'Test subject',
         'description' => 'Test description',
-        'company_id' => $company->id,
-        'site_id' => $site->id,
+        'company_id' => $this->company->id,
+        'site_id' => $this->site->id,
         'priority' => TicketPriority::Low,
-        'assigned_user_id' => $engineer->id,
+        'assigned_user_id' => $this->engineer->id,
     ];
-    $repository->create($data, $user);
+    $this->repository->create($data, $this->user);
 
     $this->assertDatabaseHas('tickets', [
         'subject' => 'Test subject',
-        'company_id' => $company->id,
-        'site_id' => $site->id,
+        'company_id' => $this->company->id,
+        'site_id' => $this->site->id,
         'priority' => TicketPriority::Low,
-        'assigned_user_id' => $engineer->id,
-        'created_by_user_id' => $user->id,
+        'assigned_user_id' => $this->engineer->id,
+        'created_by_user_id' => $this->user->id,
     ]);
 });

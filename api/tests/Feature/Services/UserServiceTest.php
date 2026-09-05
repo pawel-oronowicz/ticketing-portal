@@ -6,11 +6,13 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
 
-test('returns null when email not found', function () {
-    $repository = new UserRepository();
-    $service = new UserService($repository);
+beforeEach(function () {
+    $this->repository = new UserRepository();
+    $this->service = new UserService($this->repository);
+});
 
-    $result = $service->authenticateUser(['email' => 'johndoe123@example.com', 'password' => 'password']);
+test('returns null when email not found', function () {
+    $result = $this->service->authenticateUser(['email' => 'johndoe123@example.com', 'password' => 'password']);
     expect($result)->toBeNull();
 });
 
@@ -22,13 +24,10 @@ test('finds users by company', function () {
     User::factory()->count(2)->create(['company_id' => $company1->id]);
     User::factory()->count(3)->create(['company_id' => $company2->id]);
 
-    $repository = new UserRepository();
-    $service = new UserService($repository);
-
-    $companyUsers = $service->findAllByCompany($company1);
+    $companyUsers = $this->service->findAllByCompany($company1);
     expect($companyUsers)->toHaveCount(2);
 
-    $companyUsers = $service->findAllByCompany($company3);
+    $companyUsers = $this->service->findAllByCompany($company3);
     expect($companyUsers)->toHaveCount(0);
 });
 
